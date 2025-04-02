@@ -15,9 +15,12 @@ def process_files_in_directory(input_dir):
         with open(file_path, 'r') as file:
             line_count = sum(1 for _ in file)  # Compte le nombre total de lignes
             max_lines = max(max_lines, line_count)
+            
+            file.seek(0)
 
             # Compter le nombre de signes '+'
             plus_count = sum(1 for line in file if line.strip().split()[2] == '+')  # Compter les '+' dans le fichier
+#            print(filename, plus_count)
             file_plus_counts.append((filename, plus_count))  # Ajouter à la liste temporaire
 
     # Trier les fichiers en fonction du nombre de signes '+' (décroissant)
@@ -67,8 +70,8 @@ input_dir = 'analyse_hot_file_sorted'  # Dossier d'entrée contenant les fichier
 matrix_plus, matrix_minus = process_files_in_directory(input_dir)
 
 # Afficher les matrices formatées pour TikZ
-# print("Matrice pour les fichiers avec signe '+':")
-# print(format_matrix_for_tikz(matrix_plus))
+print("Matrice pour les fichiers avec signe '+':")
+print(format_matrix_for_tikz(matrix_plus))
 #
-# print("Matrice pour les fichiers avec signe '-':")
-# print(format_matrix_for_tikz(matrix_minus))
+print("Matrice pour les fichiers avec signe '-':")
+print(format_matrix_for_tikz(matrix_minus))
