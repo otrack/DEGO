@@ -39,7 +39,7 @@ declare -A params
 params[juc]="-c juc.Counter -s ConcurrentHashSet -q Queue -m ConcurrentSkipListMap"
 #params[dego]="-c CounterIncrementOnly -s ExtendedSegmentedHashSet -q Queue -m ConcurrentSkipListMap"
 params[dego]="-c CounterIncrementOnly -s ConcurrentHashSet -q QueueMASP -m ExtendedSegmentedSkipListMap"
-#params[dap]="-c CounterIncrementOnly -s ShardedHashSet -q ShardedLinkedList -m ShardedSkipListMap"
+params[dap]="-c CounterIncrementOnly -s ShardedHashSet -q ShardedLinkedList -m ShardedSkipListMap"
 
 for impl in dego juc;
 do

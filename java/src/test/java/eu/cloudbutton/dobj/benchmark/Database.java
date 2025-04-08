@@ -59,7 +59,7 @@ public class Database {
 
     private final KeyGenerator keyGenerator;
     private final ConcurrentSkipListMap<Long, Key> usersFollowProbability;
-    private Map<Integer,ConcurrentSkipListMap<Long, Key>> localUsersFollowProbability = null;
+    private Map<Integer,ConcurrentSkipListMap<Long, Key>> localUsersFollowProbability;
     private long usersFollowProbabilityRange;
     private Map<Integer,Long> localUsersFollowProbabilityRange;
     private final Map<Integer, ConcurrentSkipListMap<Long,Key>> localUsersUsageProbability;
@@ -69,7 +69,7 @@ public class Database {
     private final Map<Integer, List<Key>> mapUserToAdd;
     private Map<Key, Integer> mapUserUsage;
     public final boolean usageStat = false;
-    public final boolean isDAP = false;
+    public final boolean isDAP = true;
     private final Map<Key, Integer> mapUserToIndiceThread;
     private final Map<Key, Queue<Key>> mapListUserFollow;
     private final AtomicInteger count;
@@ -86,7 +86,7 @@ public class Database {
     private final ExecutorService executorService;
 
     public Database(String typeMap, String typeSet, String typeQueue, String typeCounter,
-                    int nbThread, int nbUserInit, double alpha) throws ClassNotFoundException, InterruptedException, ExecutionException, IOException {
+                    int nbThread, int nbUserInit, double alpha) throws ClassNotFoundException {
 
         this.typeMap = typeMap;
         this.typeSet = typeSet;
@@ -149,7 +149,6 @@ public class Database {
         }
 
         executorService = Executors.newFixedThreadPool(nbThread);
-        // executorService = Executors.newVirtualThreadPerTaskExecutor();
 
         this.alpha = alpha;
     }
@@ -476,7 +475,7 @@ public class Database {
         List<Integer> powerLawArray = generateValues(numberOfUsersInFile, numberOfUsersInFile, alpha, SCALEUSAGE);
         Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
 
-        int val, indiceThread = 0, nbUserPerThread = (int) Math.ceil((double)numberOfUsersInFile/(double)nbThread);
+        int val, indiceThread, nbUserPerThread = (int) Math.ceil((double)numberOfUsersInFile/(double)nbThread);
 
 
         for (int i = 0; i < numberOfUsersInFile;) {
