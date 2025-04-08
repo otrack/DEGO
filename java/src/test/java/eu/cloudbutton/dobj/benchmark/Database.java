@@ -1,7 +1,6 @@
 package eu.cloudbutton.dobj.benchmark;
 
 import eu.cloudbutton.dobj.Factory;
-import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashSet;
 import eu.cloudbutton.dobj.types.Counter;
 import eu.cloudbutton.dobj.set.ConcurrentHashSet;
 import eu.cloudbutton.dobj.Timeline;
@@ -77,10 +76,10 @@ public class Database {
 
     private final double alpha;
 
-    private static final double SCALEUSAGE = 10.0; // Paramètre d'échelle de la loi de puissance
-    private static final double SCALEFOLLOW = 10.0; // Paramètre d'échelle de la loi de puissance
-    private static final double FOLLOWERSHAPE = 1; // Paramètre de forme de la loi de puissance
-    private static final double FOLLOWINGSHAPE = 1; // Paramètre de forme de la loi de puissance
+    private static final double SCALEUSAGE = 10.0;
+    private static final double SCALEFOLLOW = 10.0;
+    private static final double FOLLOWERSHAPE = 1;
+    private static final double FOLLOWINGSHAPE = 1;
 
     private final Counter counter;
     private final ExecutorService executorService;
@@ -262,9 +261,7 @@ public class Database {
 
         for (int i = 0; i < numValues; i++) {
             double scaledValue = doubleValues.get(i) * scaleFactor;
-//            values.add((int) Math.round(doubleValues.get(i))+1);
             values.add((int) Math.round(scaledValue)+1);
-//            System.out.println((int) Math.round(doubleValues.get(i))+1);
         }
 
         return values;
@@ -470,7 +467,6 @@ public class Database {
             numberOfUsersInFile = (int) fileStream.count();
         }
 
-
         Set<Key> localSetUser = new HashSet<>();
         List<Integer> powerLawArray = generateValues(numberOfUsersInFile, numberOfUsersInFile, alpha, SCALEUSAGE);
         Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
@@ -487,7 +483,6 @@ public class Database {
                 else
                     indiceThread = Math.abs(user.hashCode()%nbThread);
 
-                // assert mapUserToAdd.containsKey(indiceThread) : indiceThread + "," + nbUserPerThread + "," + i;
                 mapUserToAdd.get(indiceThread).add(user);
                 mapUserToIndiceThread.put(user, indiceThread);
                 mapListUserFollow.put(user, new LinkedList<>());
@@ -500,9 +495,6 @@ public class Database {
 
                 tmpListUsersFollow.put(user, new LinkedList<>());
                 i++;
-//                if (i % nbUserPerThread == 0) {
-//                    indiceThread += 1;
-//                }
             }
         }
 
@@ -536,29 +528,19 @@ public class Database {
             assert values != null;
             int userIndice = Integer.parseInt(values[0]);
 
-            if (values.length <= 1) {
-                // Code if we don't want users to follow anyone
-/*                    for (int i = 0; i < 5; i++) {
-                    val = random.get().nextInt(nbUsers);
-                    followUser(mapIndiceToKey.get(userIndice), mapIndiceToKey.get(val));
-                    tmpListUsersFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(val));
-                }*/
-            } else {
-                for (int j = 1; j < values.length; j++) {
-                    try{
-                        if (isDAP) {
-                            int userToFollowIndice, rangeStart, userRangeLevel = userIndice/ nbUserPerThread;
-                            rangeStart = userRangeLevel * nbUserPerThread;
-                            userToFollowIndice = (userIndice + j) % nbUserPerThread + rangeStart;
-                            assert userToFollowIndice/nbUserPerThread == userIndice/nbUserPerThread;
-                            mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(userToFollowIndice));
-                        }
-                        else
-//                            mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(j));
-                            mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(Integer.parseInt(values[j])));
-                    } catch (NullPointerException e) {
-                        System.out.println("key from " + userIndice + " is suposed to be null : " + mapIndiceToKey.get(userIndice));
+           for (int j = 1; j < values.length; j++) {
+                try{
+                    if (isDAP) {
+                        int userToFollowIndice, rangeStart, userRangeLevel = userIndice/ nbUserPerThread;
+                        rangeStart = userRangeLevel * nbUserPerThread;
+                        userToFollowIndice = (userIndice + j) % nbUserPerThread + rangeStart;
+                        assert userToFollowIndice/nbUserPerThread == userIndice/nbUserPerThread;
+                        mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(userToFollowIndice));
                     }
+                    else
+                        mapListUserFollow.get(mapIndiceToKey.get(userIndice)).add(mapIndiceToKey.get(Integer.parseInt(values[j])));
+                } catch (NullPointerException e) {
+                    System.out.println("key from " + userIndice + " is suposed to be null : " + mapIndiceToKey.get(userIndice));
                 }
             }
 
@@ -583,8 +565,6 @@ public class Database {
         if (isDAP)
             for (int i = 0; i < nbThread; i++)
                 threadSommeFollow.put(i, 0L);
-
-
 
         for (int i = 0; i < numberOfUsersInFile; i++) {
             nbLink = 0;
@@ -636,220 +616,6 @@ public class Database {
         System.out.println("End loading graph");
     }
 
-    public void loadCompleteGraph() throws ClassNotFoundException, InterruptedException, InvocationTargetException, InstantiationException, IllegalAccessException {
-
-        Set<Key> setUser = new HashSet<>();
-        Map<Key, Queue<Key>> tmpListUsersFollow = new HashMap<>();
-
-        for (int i = 0; i < nbThread;) {
-            Key user = generateUser();
-            if (setUser.add(user)){
-                addOriginalUser(user);
-                mapIndiceToKey.put(i, user);
-                mapKeyToIndice.put(user,i);
-
-                tmpListUsersFollow.put(user, new LinkedList<>());
-                i++;
-            } else {
-                assert false;
-            }
-        }
-
-        for (int i = 0; i < nbThread; i++) {
-            for (int j = 0; j < nbThread; j++) {
-
-                if (i != j){
-                    followUser(mapIndiceToKey.get(i), mapIndiceToKey.get(j));
-                    tmpListUsersFollow.get(mapIndiceToKey.get(i)).add(mapIndiceToKey.get(j));
-                }
-            }
-        }
-
-        Map<Integer, AtomicInteger> sommeUsage = new HashMap<>();
-        long sommeFollow = 0L;
-        int j = 0;
-
-        for (int i = 0; i < nbThread; i++) {
-            sommeUsage.put(i, new AtomicInteger());
-        }
-
-        for (Key user: mapFollowing.keySet()){
-            sommeUsage.get(j%nbThread).addAndGet(1);
-            sommeFollow += 1;
-
-            localUsersUsageProbability.get(j%nbThread).put(sommeUsage.get(j%nbThread).longValue(), user);
-            localUsersUsageProbabilityRange.put(j%nbThread, sommeUsage.get(j%nbThread).longValue());
-            usersFollowProbability.put(sommeFollow, user);
-            listLocalUser.get(j%nbThread).add(user);
-            listLocalUsersFollow.get(j%nbThread).put(user, tmpListUsersFollow.get(user));
-
-            j++;
-        }
-        usersFollowProbabilityRange = sommeFollow;
-    }
-
-    public void loadDAPGraph() throws ClassNotFoundException, InterruptedException {
-        System.out.println("Loading DAP graph");
-
-        Set<Key> setUser = new HashSet<>();
-        Queue<Key> listUser = new LinkedList<>();
-//        int nbUserPerThread = 2;
-        int nbUserPerThread = nbUsers/nbThread;
-        int nbUserFollowedPerUser = nbUserPerThread;
-        int nbUserFollowingPerThread = nbUserPerThread;
-
-        int indice = 0;
-
-        for (int i = 0; i < nbThread * nbUserPerThread;) {
-//            if (i%1000 == 0)
-//                System.out.println(i +"/"+ nbThread*nbUserPerThread);
-            Key user = generateUser();
-            if (setUser.add(user)){
-                mapUserToAdd.get(indice).add(user);
-                mapListUserFollow.put(user, new LinkedList<>());
-                listUser.offer(user);
-                mapIndiceToKey.put(i, user);
-                mapKeyToIndice.put(user,i);
-
-                i++;
-                if (i % nbUserPerThread == 0) {
-                    indice += 1;
-                }
-            }
-        }
-//
-//        for (int o : mapUserToAdd.keySet()) {
-//            System.out.print(o + " :");
-//            for (Key user : mapUserToAdd.get(o)) {
-//                System.out.print(" " + mapKeyToIndice.get(user) );
-//            }
-//            System.out.println();
-//            System.out.println();
-//        }
-//
-
-        for (int i = 0; i < nbThread; i++) {
-//            System.out.println("thread num : " + i);
-            for (int k = 0; k < nbUserFollowingPerThread; k++) {
-                int w = k+(i*nbUserPerThread);
-                if (w >= nbUsers)
-                    break;
-                for (int j = 0; j < nbUserFollowedPerUser; j++) {
-                    int v = j+(i*nbUserPerThread);
-                    if (v >= nbUsers)
-                        break;
-                    if (w != v){
-                        try{
-
-                            mapListUserFollow.get(mapIndiceToKey.get(w)).add(mapIndiceToKey.get(v));
-                        } catch (Exception e) {
-
-                            System.out.println(w + " : " +mapIndiceToKey.get(w));
-
-                            System.out.println();
-
-                            e.printStackTrace();
-                            System.exit(1);
-                        }
-                    }
-                }
-            }
-        }
-/*
-
-        for(Key o : mapListUserFollow.keySet()){
-            System.out.print(mapKeyToIndice.get(o) + " :");
-            for (Key user : mapListUserFollow.get(o)) {
-                System.out.print(" " + mapKeyToIndice.get(user));
-            }
-            System.out.println();
-            System.out.println();
-        }
-*/
-
-//        Thread.sleep(10_000);
-
-        Map<Integer, AtomicInteger> sommeUsage = new HashMap<>();
-        long sommeFollow = 0L;
-        int j = 1;
-
-        for (int i = 0; i < nbUsers; i++) {
-            sommeUsage.put(i, new AtomicInteger());
-        }
-
-        int threadNum = 0;
-
-//        System.out.println(listUser.size());
-        for (Key user: listUser){
-            sommeUsage.get(threadNum).incrementAndGet();
-            sommeFollow += 1;
-
-//            if (sommeUsage.get(threadNum).longValue() == 1)
-//                System.out.println("user with longValue 0 : " + user);
-
-            localUsersUsageProbability.get(threadNum).put(sommeUsage.get(threadNum).longValue(), user);
-            localUsersUsageProbabilityRange.put(threadNum, sommeUsage.get(threadNum).longValue());
-            usersFollowProbability.put(sommeFollow, user);
-            listLocalUser.get(threadNum).add(user);
-            listLocalUsersFollow.get(threadNum).put(user, mapListUserFollow.get(user));
-
-            if (j%nbUserPerThread == 0) {
-                threadNum += 1;
-//                System.out.println(threadNum);
-            }
-            j++;
-        }
-
-//        Set<Key> distinctUser = new HashSet<>();
-
-//        for (int i = 0; i < threadNum; i++) {
-//            System.out.println("\n =====> thread num : " + i);
-//            System.out.println("list local user size : " + listLocalUser.get(i).size());
-//            System.out.println();
-//
-//            for (Key k : localUsersUsageProbability.get(i).values()){
-//                if (!distinctUser.add(k))
-//                    System.out.println("A user is present two time");
-//            }
-////            System.out.println(localUsersUsageProbability.get(i));
-//            System.out.println();
-//            System.out.println();
-//
-//        }
-
-//        System.out.println("mapFollowers \n");
-//        for (Key user : mapFollowers.keySet()){
-//            if (mapFollowers.get(user).size() != 0){
-////                System.out.println(user + "indice = "+ mapKeyToIndice.get(user) +", nb Follower : " + mapFollowers.get(user).size());
-//            }
-//        }
-//        System.out.println();
-//        System.out.println();
-//        System.out.println("mapFollowing \n");
-//
-//        for (Key user : mapFollowing.keySet()){
-//            if (mapFollowing.get(user).size() != 0){
-////                System.out.println(user + "indice = "+ mapKeyToIndice.get(user) +", nb Following : " + mapFollowing.get(user).size());
-//            }
-//        }
-
-
-/*
-        for (int i = 0; i < nbThread; i++) {
-            System.out.println("Thread : " + i + " contains : ");
-            for (Key user : listLocalUsersFollow.get(i).keySet()){
-                System.out.print(mapKeyToIndice.get(user) + " : ");
-                for (Key user2 : listLocalUsersFollow.get(i).get(user)){
-                    System.out.print(mapKeyToIndice.get(user2) + ", ");
-                }
-                System.out.println();
-            }
-            System.out.println();
-            System.out.println();
-        }*/
-        usersFollowProbabilityRange = sommeFollow;
-    }
-
     public static Map<Key, Integer> sortMapByValue(Map<Key, Integer> inputMap) {
         // Convert the inputMap to a List of Map.Entry objects
         List<Map.Entry<Key, Integer>> entryList = new ArrayList<>(inputMap.entrySet());
@@ -866,142 +632,8 @@ public class Database {
         return sortedMap;
     }
 
-    public static Integer getKeyByValueForMapUserToAdd(Map<Integer, List<Key>> map, Key value) {
-        for (Map.Entry<Integer, List<Key>> entry : map.entrySet()) {
-            if (entry.getValue().contains(value))
-                return entry.getKey();
-        }
-        return null;
-    }
-
-    public String computeHistogram(int range, int max, String type){
-
-        Map<Key, Set<Key>> computedMap = null;
-
-        if (type.equals("Follower")) {
-            computedMap = mapFollowers;
-        }else if (type.equals("Following")){
-            computedMap = mapFollowing;
-        }
-
-//        for (int i = 0; i <= max; i+=max/range) {
-//            mapHistogram.put(i,0);
-//        }
-
-        int v,k;
-
-        assert computedMap != null : "Failed initialize map while computing histogram";
-
-        String values = "";
-        for (Set<Key> s : computedMap.values()) {
-            values += s.size() +" ";
-//            k = mapHistogram.ceilingKey(s.size());
-//            v = mapHistogram.get(k) + 1;
-//            mapHistogram.put(k, v);
-        }
-
-//        int totalUser = 0;
-//
-//        for (int nb : mapHistogram.values())
-//            totalUser += nb;
-//
-//        assert  totalUser == nbUsers : "Wrong number of user in histogram";
-
-        return values;
-//        return mapHistogram;
-    }
-
-    public Map computeFollowHistogram(int range, int max, String type){
-
-//        NavigableMap<Integer,Integer> mapHistogram = new TreeMap<>();
-        Map<Key, Set<Key>> computedMap = null;
-        Map<Integer, Integer> map = new HashMap<>();
-
-        if (type.equals("Follower")) {
-            computedMap = mapFollowers;
-        }else if (type.equals("Following")){
-            computedMap = mapFollowing;
-        }
-
-
-        for (Key key : computedMap.keySet()){
-//            System.out.println(key);
-            int size = computedMap.get(key).size();
-//            if (size > 1000)
-//                System.out.println(size);
-            if (!map.containsKey(size))
-                map.put(size, 1);
-            else
-                map.put(size, map.get(size) + 1);
-        }
-
-        return map;
-    }
-
-    public double computeAvgCoefficientCluster(){
-
-        System.out.println("Computing AvgCoefficientCluster");
-        double avg = 0;
-
-        Set<Key> setUsers = mapFollowers.keySet();
-        Set<Key> possibleNeighbors;
-
-        int count = 0;
-
-        for (Key usr : setUsers){
-
-            if (++count%(nbUsers*0.05) == 0)
-                System.out.println("nb usr processed : " + count);
-
-            possibleNeighbors = new HashSet<>(){
-                {
-                    addAll(mapFollowers.get(usr));
-                    addAll(mapFollowing.get(usr));
-                }
-            };
-
-            List<Key> neighbors = new ArrayList<>();
-
-            for (Key possibleNeighbor : possibleNeighbors){
-                if (hasEdge(usr, possibleNeighbor))
-                    neighbors.add(possibleNeighbor);
-            }
-
-            int numLinks = 0;
-            int neighborSize = neighbors.size();
-
-            if (neighborSize < 2)
-                continue;
-
-            for (int i = 0; i <neighborSize; i++) {
-                for (int j = i+1; j < neighborSize; j++) {
-                    if (hasEdge(neighbors.get(i), neighbors.get(j)))
-                        numLinks++;
-                }
-            }
-
-            double coefficient_cluster = (2.0 * numLinks) / (neighborSize * (neighborSize - 1));
-
-            if (coefficient_cluster>0)
-                System.out.println("CC : " + coefficient_cluster);
-            avg += coefficient_cluster;
-        }
-
-        avg = avg / setUsers.size();
-
-        return avg;
-    }
-
-    private boolean hasEdge(Key usr1, Key usr2){
-        if (usr1.equals(usr2))
-            return false;
-
-        return mapFollowers.get(usr1).contains(usr2) && mapFollowers.get(usr2).contains(usr1);
-    }
-
     public void addOriginalUser(Key user) throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
         mapFollowers.put(user, new ConcurrentHashSet<>());
-//        mapFollowers.put(user, factory.newSet());
         mapFollowing.put(user, new HashSet<>());
         mapTimelines.put(user, new Timeline(factory.newQueue()));
         mapProfiles.put(user, 0);
@@ -1059,25 +691,14 @@ public class Database {
                 (_,p) ->
                 {
                     return p++;
-//                    byte[] bytesOfMessage = null;
-//                    try {
-//                        bytesOfMessage = Integer.toString(u.hashCode()).getBytes("UTF-8");
-//                        MessageDigest md = MessageDigest.getInstance("MD5");
-//                        return md.digest(bytesOfMessage).length;
-//                    } catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
-//                        e.printStackTrace();
-//                        throw new RuntimeException(e);
-//                    }
                 });
     }
 
     public void joinCommunity(Key user){
-        // counter.decrementAndGet();
         community.add(user);
     }
 
     public void leaveCommunity(Key user){
-        // counter.incrementAndGet();
         community.remove(user);
     }
 
@@ -1138,18 +759,6 @@ public class Database {
             ConcurrentHashMap map = (ConcurrentHashMap) mapFollowers;
         }
         return builder.toString();
-    }
-
-    public int nbTotalBin(){
-        int nbBin = 0;
-
-        for (Key user : mapFollowers.keySet()) {
-            if (Objects.equals(typeSet, "ConcurrentHashSet"))
-                nbBin += ((ConcurrentHashSet)mapFollowers.get(user)).getNbBin();
-            else if (Objects.equals(typeSet, "ExtendedSegmentedHashSet"))
-                nbBin += ((ExtendedSegmentedHashSet)mapFollowers.get(user)).getNbBin();
-        }
-        return nbBin;
     }
 
     @Override
