@@ -26,6 +26,8 @@ params[dego]="-c CounterIncrementOnly -s ConcurrentHashSet -q QueueMASP -m Exten
 
 alphas=("1")
 
+> perf_retwis.txt
+
 for impl in "${!params[@]}";
 do
     for alpha in "${alphas[@]}";
