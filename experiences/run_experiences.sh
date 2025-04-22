@@ -129,9 +129,35 @@ benchmarkTime=10
 warmingUpTime=5
 nbThreads=("1" "80")
 #nbThreads=("1" "5" "10" "20" "40" "80")
-objects=("AtomicWriteOnceReference" "AtomicReference")
-#objects=("juc.Counter" "CounterIncrementOnly" "LongAdder" "ConcurrentHashMap" "ExtendedSegmentedHashMap" "ConcurrentSkipListMap" "ExtendedSegmentedSkipListMap" "AtomicWriteOnceReference" "AtomicReference" "ConcurrentLinkedQueue" "QueueMASP")
+objects=("juc.Counter" "CounterIncrementOnly" "LongAdder" "ConcurrentHashMap" "ExtendedSegmentedHashMap" "ConcurrentSkipListMap" "ExtendedSegmentedSkipListMap")
 ratio="100 0 0"
+
+for object in "${objects[@]}"; do
+  python3 rm_file.py "Microbenchmark" "$object"
+
+  for nbThread in "${nbThreads[@]}"; do
+    for (( c=1; c<=nbTest; c++ )) do
+        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m "$object" -t Microbenchmark -p -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
+        python3 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
+    done
+  done
+done
+
+objects=("ConcurrentLinkedQueue" "QueueMASP")
+
+for object in "${objects[@]}"; do
+  python3 rm_file.py "Microbenchmark" "$object"
+
+  for nbThread in "${nbThreads[@]}"; do
+    for (( c=1; c<=nbTest; c++ )) do
+        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m "$object" -t Microbenchmark -p -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread" -a
+        python3 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
+    done
+  done
+done
+
+objects=("AtomicWriteOnceReference" "AtomicReference")
+ratio="0 100 0"
 
 for object in "${objects[@]}"; do
   python3 rm_file.py "Microbenchmark" "$object"

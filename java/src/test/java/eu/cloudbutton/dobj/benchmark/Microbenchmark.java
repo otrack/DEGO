@@ -291,17 +291,12 @@ public class Microbenchmark {
                     int opNumber = 0;
 
                     for (opType ignored : opType.values()){
-                        System.out.println("===> " +  timeOperations.get(opNumber).get());
                         timeTotal += timeOperations.get(opNumber).get();
                         nbOpTotal += nbOperations.get(opNumber).get();
                         opNumber++;
                     }
 
                     double throughputTotal;
-
-                    System.out.println("nbOpTotal = " + nbOpTotal);
-                    System.out.println("timeTotal = " + timeTotal);
-                    System.out.println("nbCurrentThread = " + nbCurrentThread);
 
                     throughputTotal = (nbOpTotal/(double) (timeTotal)) * nbCurrentThread * 1_000_000_000;
 
