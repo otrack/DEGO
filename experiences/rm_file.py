@@ -15,11 +15,11 @@ if benchmark_type == "Retwis":
 else:
     list_op = ["ALL", "ADD", "REMOVE", "READ"]
 
-for op in list_op:
-    try:
-        if benchmark_type == "Retwis":
-            os.remove(op+"_"+type_obj+"_"+nb_user+".txt")
-        else:
-            os.remove("microbenchmark_results/"+type_obj+"_"+op+".txt")
-    except FileNotFoundError:
-        pass
+# for op in list_op:
+#     try:
+#         if benchmark_type == "Retwis":
+#             os.remove(op+"_"+type_obj+"_"+nb_user+".txt")
+#         else:
+#             os.remove("microbenchmark_results/"+type_obj+"_"+op+".txt")
+#     except FileNotFoundError:
+#         pass
