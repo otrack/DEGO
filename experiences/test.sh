@@ -32,6 +32,7 @@ nbThreads=""
 nbItemsPerThread=""
 computeGCInfo=false
 alpha=""
+dap=""
 compile=false
 
 while getopts 'xc:s:q:l:m:t:r:pew:u:n:fakvoi:zy:bh:g:d:jA:' OPTION; do
@@ -170,6 +171,9 @@ while getopts 'xc:s:q:l:m:t:r:pew:u:n:fakvoi:zy:bh:g:d:jA:' OPTION; do
 	d)
 	    nbItemsPerThread="-nbItems $OPTARG"
 	    ;;
+	D)
+	    dap="-dap"
+	    ;;
 	j)
 	    computeGCInfo=true
 	    ;;
@@ -294,7 +298,7 @@ JVM_EXPORTS="--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/j
 JVM_ARGS="-Xms8g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended ${JVM_EXPORTS}" #  -ea  -Xmx16g
 # JVM_ARGS="-Xms5g -Xmx16g -XX:+UseNUMA -XX:+UseG1GC -XX:-RestrictContended ${JVM_EXPORTS}"
 
-RETWIS_ARGS="-set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag -gcinfo -alphaMin ${alpha}" # -generate"
+RETWIS_ARGS="-set $typeSet -queue $typeQueue -counter $typeCounter -map $typeMap -distribution $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $completionTime $nbUserInit $print $save $breakdown $quickTest $collisionKey $nbItemsPerThread -tag $tag -gcinfo -alphaMin ${alpha} $dap" # -generate"
 
 NUMA="numactl --physcpubind=$cpuIDs" # --membind=0"
 

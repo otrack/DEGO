@@ -111,6 +111,9 @@ public class Retwis {
     @Option(name = "-generate", usage = "If true, generate the graph then exit")
     private boolean _generate = false;
 
+    @Option(name = "-dap", usage = "If true, generate the graph such that")
+    private boolean _dap = false;
+
     private AtomicBoolean flagComputing,flagWarmingUp;
     private AtomicLong totalTime;
 
