@@ -10,7 +10,7 @@ nbTest=1
 benchmarkTime=60
 warmingUpTime=30
 nbThreads=("1" "40" "80")
-objects=("ConcHashMap" "ExtendedSegmentedHashMap")
+objects=("ConcurrentHashMap" "ExtendedSegmentedHashMap")
 ratio="37 37 26"
 
 for object in "${objects[@]}"; do
