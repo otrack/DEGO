@@ -298,6 +298,10 @@ public class Microbenchmark {
 
                     double throughputTotal;
 
+                    System.out.println("nbOpTotal = " + nbOpTotal);
+                    System.out.println("timeTotal = " + timeTotal);
+                    System.out.println("nbCurrentThread = " + nbCurrentThread);
+
                     throughputTotal = (nbOpTotal/(double) (timeTotal)) * nbCurrentThread * 1_000_000_000;
 
                     if (_s){

@@ -129,7 +129,8 @@ benchmarkTime=10
 warmingUpTime=5
 nbThreads=("1" "80")
 #nbThreads=("1" "5" "10" "20" "40" "80")
-objects=("juc.Counter" "CounterIncrementOnly" "LongAdder" "ConcurrentHashMap" "ExtendedSegmentedHashMap" "ConcurrentSkipListMap" "ExtendedSegmentedSkipListMap" "AtomicWriteOnceReference" "AtomicReference" "ConcurrentLinkedQueue" "QueueMASP")
+objects=("AtomicWriteOnceReference" "AtomicReference")
+#objects=("juc.Counter" "CounterIncrementOnly" "LongAdder" "ConcurrentHashMap" "ExtendedSegmentedHashMap" "ConcurrentSkipListMap" "ExtendedSegmentedSkipListMap" "AtomicWriteOnceReference" "AtomicReference" "ConcurrentLinkedQueue" "QueueMASP")
 ratio="100 0 0"
 
 for object in "${objects[@]}"; do
