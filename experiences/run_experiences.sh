@@ -40,7 +40,7 @@ do
                 for (( c=1; c<=nbTest; c++ ))
                 do
                     perf=$(perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh ${params["${impl}"]} -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${impl}_${nbThread}" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z | grep -i "completion time :" | awk '{print $6}' | sed s/\(//g)
-                    echo ${impl}";"${alpha}";"${nbUsersInit}";"${nbThread}";"${perf} > perf_retwis.txt
+                    echo ${impl}";"${alpha}";"${nbUsersInit}";"${nbThread}";"${perf} >> perf_retwis.txt
                 done
             done
         done
