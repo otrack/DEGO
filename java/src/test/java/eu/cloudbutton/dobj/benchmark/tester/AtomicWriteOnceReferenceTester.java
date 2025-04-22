@@ -42,6 +42,7 @@ public class AtomicWriteOnceReferenceTester extends Tester<AtomicWriteOnceRefere
             Microbenchmark.map.remove(Thread.currentThread().getName() + i);
         }
 
+        System.out.println(endTime - startTime);
         return (endTime - startTime);
     }
 
