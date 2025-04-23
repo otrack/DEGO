@@ -110,6 +110,7 @@ public class Factory {
     public static Class toClass(String name) throws ClassNotFoundException {
         switch (name) {
             // counter
+            case "Counter":
             case "juc.Counter":
                 return eu.cloudbutton.dobj.juc.Counter.class;
             case "CounterIncrementOnly":

@@ -301,7 +301,11 @@ public class Microbenchmark {
                     throughputTotal = (nbOpTotal/(double) (timeTotal)) * nbCurrentThread * 1_000_000_000;
 
                     if (_s){
-                        String nameFile = object.getClass().getSimpleName() + "_ALL.txt";
+                        String className = object.getClass().getSimpleName();
+
+                        className = "WrappedLongAdder".equals(className) ? "LongAdder" : className;
+
+                        String nameFile = className + "_ALL.txt";
                         fileWriter = new FileWriter(directory + File.separator + nameFile, true);
 
 //                    if (nbCurrentThread == 1 || (_asymmetric && nbCurrentThread == 2))
