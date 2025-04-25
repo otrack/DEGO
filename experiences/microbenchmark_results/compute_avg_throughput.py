@@ -111,7 +111,7 @@ if __name__ == "__main__":
         file = nthread_perf_tuples[0]
         nthread_perf_dict = nthread_perf_tuples[1]
 
-        file_name = args.directory_to_write + os.path.basename(file.name)
+        file_name = args.directory_to_write +"/"+ os.path.basename(file.name)
 
         file_to_write = open(file_name, 'w')
 
