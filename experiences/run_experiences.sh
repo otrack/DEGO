@@ -145,150 +145,150 @@ python3.11 microbenchmark_results/generate_latex.py -f microbenchmark_results/av
 python3.11 microbenchmark_results/generate_latex.py -f microbenchmark_results/avg_perf/ConcurrentSkipListMap_ALL.txt -f microbenchmark_results/avg_perf/ExtendedSegmentedSkipListMap_ALL.txt -t SkipListMap
 python3.11 microbenchmark_results/generate_latex.py -f microbenchmark_results/avg_perf/Counter_ALL.txt -f microbenchmark_results/avg_perf/CounterIncrementOnly_ALL.txt -f microbenchmark_results/avg_perf/LongAdder_ALL.txt -t Counter
 
-# Saving 100% update results for Figure 7
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/100 -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/100 -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/100 -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/100 -u 1000 -d
-
-# Saving 16k dataset size for Figure 8
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/16k -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/16k -u 1000 -d
-
-objects=("ConcurrentLinkedQueue" "QueueMASP")
-
-for object in "${objects[@]}"; do
-  python3.11 rm_file.py "Microbenchmark" "$object"
-
-  for nbThread in "${nbThreads[@]}"; do
-    for (( c=1; c<=nbTest; c++ )) do
-        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m "$object" -t Microbenchmark -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread" -a
-        python3.11 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
-    done
-  done
-  python3.11 microbenchmark_results/compute_avg_throughput.py -t "$object" -typeOp ALL -p microbenchmark_results/avg_perf -u 1000
-done
-
-python3.11 microbenchmark_results/generate_latex.py -f microbenchmark_results/avg_perf/ConcurrentLinkedQueue_ALL.txt -f microbenchmark_results/avg_perf/QueueMASP_ALL.txt -t Queue
-
-objects=("AtomicWriteOnceReference" "AtomicReference")
-ratio="0 100 0"
-
-for object in "${objects[@]}"; do
-  python3.11 rm_file.py "Microbenchmark" "$object"
-
-  for nbThread in "${nbThreads[@]}"; do
-    for (( c=1; c<=nbTest; c++ )) do
-        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m "$object" -t Microbenchmark -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
-        python3.11 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
-    done
-  done
-
-  python3.11 microbenchmark_results/compute_avg_throughput.py -t "$object" -typeOp ALL -p microbenchmark_results/avg_perf -u 1000
-done
-
-python3.11 microbenchmark_results/generate_latex.py -f microbenchmark_results/avg_perf/AtomicReference_ALL.txt -f microbenchmark_results/avg_perf/AtomicWriteOnceReference_ALL.txt -t HashMap
-
-######################### Experience Figure 7
-
-objects=("ConcurrentHashMap" "ExtendedSegmentedHashMap" "ConcurrentSkipListMap" "ExtendedSegmentedSkipListMap")
-ratio="25 75 0"
-
-for object in "${objects[@]}"; do
-  python3.11 rm_file.py "Microbenchmark" "$object"
-
-  for nbThread in "${nbThreads[@]}"; do
-    for (( c=1; c<=nbTest; c++ )) do
-        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m "$object" -t Microbenchmark -p -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
-        python3.11 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
-
-    done
-  done
-done
-
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/25 -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/25 -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/25 -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/25 -u 1000 -d
-
-ratio="50 50 0"
-
-for object in "${objects[@]}"; do
-  python3.11 rm_file.py "Microbenchmark" "$object"
-
-  for nbThread in "${nbThreads[@]}"; do
-    for (( c=1; c<=nbTest; c++ )) do
-        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m "$object" -t Microbenchmark -p -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
-        python3.11 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
-    done
-  done
-done
-
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/50 -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/50 -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/50 -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/50 -u 1000 -d
-
-ratio="75 75 0"
-
-for object in "${objects[@]}"; do
-  python3.11 rm_file.py "Microbenchmark" "$object"
-
-  for nbThread in "${nbThreads[@]}"; do
-    for (( c=1; c<=nbTest; c++ )) do
-        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m "$object" -t Microbenchmark -p -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
-        python3.11 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
-    done
-  done
-done
-
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/75 -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/75 -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/75 -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/75 -u 1000 -d
-
-python3.11 generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 25
-python3.11 generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 50
-python3.11 generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 75
-python3.11 generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 100
-
-################## Figure 8
-
-objects=("ConcurrentHashMap" "ExtendedSegmentedHashMap")
-ratio="100 0 0"
-
-initSize=32768
-range=65536
-
-for object in "${objects[@]}"; do
-  python3.11 rm_file.py "Microbenchmark" "$object"
-
-  for nbThread in "${nbThreads[@]}"; do
-    for (( c=1; c<=nbTest; c++ )) do
-        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m "$object" -t Microbenchmark -p -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
-        python3.11 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
-    done
-  done
-done
-
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/32k -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/32k -u 1000 -d
-
-initSize=65536
-range=131072
-
-for object in "${objects[@]}"; do
-  python3.11 rm_file.py "Microbenchmark" "$object"
-
-  for nbThread in "${nbThreads[@]}"; do
-    for (( c=1; c<=nbTest; c++ )) do
-        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m "$object" -t Microbenchmark -p -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
-        python3.11 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
-    done
-  done
-done
-
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/64k -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/64k -u 1000 -d
-
-python3.11 generate_histograme_latex_size.py -od ExtendedSegmentedHashMap -oj ConcurrentHashMap -s 16k -s 32k -s 64k
+## Saving 100% update results for Figure 7
+#python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/100 -u 1000 -d
+#python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/100 -u 1000 -d
+#python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/100 -u 1000 -d
+#python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/100 -u 1000 -d
+#
+## Saving 16k dataset size for Figure 8
+#python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/16k -u 1000 -d
+#python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/16k -u 1000 -d
+#
+#objects=("ConcurrentLinkedQueue" "QueueMASP")
+#
+#for object in "${objects[@]}"; do
+#  python3.11 rm_file.py "Microbenchmark" "$object"
+#
+#  for nbThread in "${nbThreads[@]}"; do
+#    for (( c=1; c<=nbTest; c++ )) do
+#        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m "$object" -t Microbenchmark -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread" -a
+#        python3.11 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
+#    done
+#  done
+#  python3.11 microbenchmark_results/compute_avg_throughput.py -t "$object" -typeOp ALL -p microbenchmark_results/avg_perf -u 1000
+#done
+#
+#python3.11 microbenchmark_results/generate_latex.py -f microbenchmark_results/avg_perf/ConcurrentLinkedQueue_ALL.txt -f microbenchmark_results/avg_perf/QueueMASP_ALL.txt -t Queue
+#
+#objects=("AtomicWriteOnceReference" "AtomicReference")
+#ratio="0 100 0"
+#
+#for object in "${objects[@]}"; do
+#  python3.11 rm_file.py "Microbenchmark" "$object"
+#
+#  for nbThread in "${nbThreads[@]}"; do
+#    for (( c=1; c<=nbTest; c++ )) do
+#        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m "$object" -t Microbenchmark -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
+#        python3.11 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
+#    done
+#  done
+#
+#  python3.11 microbenchmark_results/compute_avg_throughput.py -t "$object" -typeOp ALL -p microbenchmark_results/avg_perf -u 1000
+#done
+#
+#python3.11 microbenchmark_results/generate_latex.py -f microbenchmark_results/avg_perf/AtomicReference_ALL.txt -f microbenchmark_results/avg_perf/AtomicWriteOnceReference_ALL.txt -t HashMap
+#
+########################## Experience Figure 7
+#
+#objects=("ConcurrentHashMap" "ExtendedSegmentedHashMap" "ConcurrentSkipListMap" "ExtendedSegmentedSkipListMap")
+#ratio="25 75 0"
+#
+#for object in "${objects[@]}"; do
+#  python3.11 rm_file.py "Microbenchmark" "$object"
+#
+#  for nbThread in "${nbThreads[@]}"; do
+#    for (( c=1; c<=nbTest; c++ )) do
+#        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m "$object" -t Microbenchmark -p -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
+#        python3.11 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
+#
+#    done
+#  done
+#done
+#
+#python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/25 -u 1000 -d
+#python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/25 -u 1000 -d
+#python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/25 -u 1000 -d
+#python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/25 -u 1000 -d
+#
+#ratio="50 50 0"
+#
+#for object in "${objects[@]}"; do
+#  python3.11 rm_file.py "Microbenchmark" "$object"
+#
+#  for nbThread in "${nbThreads[@]}"; do
+#    for (( c=1; c<=nbTest; c++ )) do
+#        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m "$object" -t Microbenchmark -p -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
+#        python3.11 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
+#    done
+#  done
+#done
+#
+#python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/50 -u 1000 -d
+#python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/50 -u 1000 -d
+#python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/50 -u 1000 -d
+#python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/50 -u 1000 -d
+#
+#ratio="75 75 0"
+#
+#for object in "${objects[@]}"; do
+#  python3.11 rm_file.py "Microbenchmark" "$object"
+#
+#  for nbThread in "${nbThreads[@]}"; do
+#    for (( c=1; c<=nbTest; c++ )) do
+#        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m "$object" -t Microbenchmark -p -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
+#        python3.11 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
+#    done
+#  done
+#done
+#
+#python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/75 -u 1000 -d
+#python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/75 -u 1000 -d
+#python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/75 -u 1000 -d
+#python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/75 -u 1000 -d
+#
+#python3.11 generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 25
+#python3.11 generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 50
+#python3.11 generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 75
+#python3.11 generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 100
+#
+################### Figure 8
+#
+#objects=("ConcurrentHashMap" "ExtendedSegmentedHashMap")
+#ratio="100 0 0"
+#
+#initSize=32768
+#range=65536
+#
+#for object in "${objects[@]}"; do
+#  python3.11 rm_file.py "Microbenchmark" "$object"
+#
+#  for nbThread in "${nbThreads[@]}"; do
+#    for (( c=1; c<=nbTest; c++ )) do
+#        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m "$object" -t Microbenchmark -p -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
+#        python3.11 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
+#    done
+#  done
+#done
+#
+#python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/32k -u 1000 -d
+#python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/32k -u 1000 -d
+#
+#initSize=65536
+#range=131072
+#
+#for object in "${objects[@]}"; do
+#  python3.11 rm_file.py "Microbenchmark" "$object"
+#
+#  for nbThread in "${nbThreads[@]}"; do
+#    for (( c=1; c<=nbTest; c++ )) do
+#        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m "$object" -t Microbenchmark -p -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
+#        python3.11 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
+#    done
+#  done
+#done
+#
+#python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/64k -u 1000 -d
+#python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/64k -u 1000 -d
+#
+#python3.11 generate_histograme_latex_size.py -od ExtendedSegmentedHashMap -oj ConcurrentHashMap -s 16k -s 32k -s 64k
