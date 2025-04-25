@@ -27,10 +27,18 @@ def compute_statistics(nThread, data):
     mean = sum(data) / len(data)
 
     if args.detailed:
-        max_value = max(data)
-        min_value = min(data)
-        standard_deviation = statistics.stdev(data)
-        margin_of_error = 1.96 * standard_deviation / len(data) ** 0.5
+
+        if len(data) == 1:
+            max_value = data[0]
+            min_value = data[0]
+            standard_deviation = 0
+            margin_of_error = 1.96 * standard_deviation / len(data) ** 0.5
+        else:
+            max_value = max(data)
+            min_value = min(data)
+            standard_deviation = statistics.stdev(data)
+            margin_of_error = 1.96 * standard_deviation / len(data) ** 0.5
+
         if args.scientific:
             return ("{:.1e}".format(int(mean)), "{:.1e}".format(int(max_value)), "{:.1e}".format(int(min_value)), "{:.1e}".format(int(mean + margin_of_error)), "{:.1e}".format(int(mean - margin_of_error)))
         else:
