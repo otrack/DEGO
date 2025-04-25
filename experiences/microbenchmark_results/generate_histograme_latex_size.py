@@ -147,8 +147,8 @@ deg_files=list()
 java_files=list()
 
 for size in args.sizes:
-    deg_files.append("avg_perf/" + str(size) + "/" + args.deg_obj + "_ALL.txt")
-    java_files.append("avg_perf/" + str(size) + "/" + args.java_obj + "_ALL.txt")
+    deg_files.append("microbenchmark_results/avg_perf/" + str(size) + "/" + args.deg_obj + "_ALL.txt")
+    java_files.append("microbenchmark_results/avg_perf/" + str(size) + "/" + args.java_obj + "_ALL.txt")
 
 
 generate_latex(deg_files, java_files)

@@ -229,7 +229,7 @@ python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentSkipLis
 python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/50 -u 1000 -d
 python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/50 -u 1000 -d
 
-ratio="75 75 0"
+ratio="75 25 0"
 
 for object in "${objects[@]}"; do
   python3.11 rm_file.py "Microbenchmark" "$object"
@@ -247,10 +247,10 @@ python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentSkipLis
 python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/75 -u 1000 -d
 python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/75 -u 1000 -d
 
-python3.11 generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 25
-python3.11 generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 50
-python3.11 generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 75
-python3.11 generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 100
+python3.11 microbenchmark_results/generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 25
+python3.11 microbenchmark_results/generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 50
+python3.11 microbenchmark_results/generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 75
+python3.11 microbenchmark_results/generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 100
 
 ################## Figure 8
 
@@ -291,4 +291,4 @@ done
 python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/64k -u 1000 -d
 python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/64k -u 1000 -d
 
-python3.11 generate_histograme_latex_size.py -od ExtendedSegmentedHashMap -oj ConcurrentHashMap -s 16k -s 32k -s 64k
+python3.11 microbenchmark_results/generate_histograme_latex_size.py -od ExtendedSegmentedHashMap -oj ConcurrentHashMap -s 16k -s 32k -s 64k
