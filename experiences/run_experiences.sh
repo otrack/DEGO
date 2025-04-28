@@ -187,7 +187,7 @@ for object in "${objects[@]}"; do
   python3.11 microbenchmark_results/compute_avg_throughput.py -t "$object" -typeOp ALL -p microbenchmark_results/avg_perf -u 1000
 done
 
-python3.11 microbenchmark_results/generate_latex.py -f microbenchmark_results/avg_perf/AtomicReference_ALL.txt -f microbenchmark_results/avg_perf/AtomicWriteOnceReference_ALL.txt -t HashMap
+python3.11 microbenchmark_results/generate_latex.py -f microbenchmark_results/avg_perf/AtomicReference_ALL.txt -f microbenchmark_results/avg_perf/AtomicWriteOnceReference_ALL.txt -t Reference
 
 ######################### Experience Figure 7
 

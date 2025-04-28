@@ -163,4 +163,4 @@ if len(args.update_rate) != 0:
 for i in range(len(args.files)):
     args.files[i] = "microbenchmark_results/avg_perf/" + update_rate +"/"+ args.files[i]
 
-generate_latex(args.files[0], args.files[1], args.files[2], args.files[3], "histogram_ratio"+ args.update_rate +".tex")
+generate_latex(args.files[0], args.files[1], args.files[2], args.files[3], "histogram_ratio_"+ args.update_rate +".tex")

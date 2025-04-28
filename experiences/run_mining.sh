@@ -70,5 +70,12 @@ done
 for repo in "${repos[@]}"
 do
     echo "Analyzing repository: ${repo}"
-    python3 mining.py -r "${repo}" ${class_args} -hot
+    python3.11 mining.py -r "${repo}" ${class_args} -hot
+    python3.11 mining.py -r "${repo}" ${class_args} -e
+    python3.11 mining.py -r "${repo}" ${class_args}
+done
+
+for clazz in "${classes[@]}"
+do
+    class_args+="-c ${clazz} "
 done

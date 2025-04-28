@@ -320,7 +320,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    # Lancer l'analyse avec les paramètres fournis
     if args.hot:
         analyze_hot_files(args.repo_url)
     else:
