@@ -14,7 +14,7 @@ def setUp_parser():
 
 def generate_latex_file(file_name_avg, file_name_proportion):
 
-    years=list("2015", "2018", "2021", "2024")
+    years=("2015", "2018", "2021", "2024")
 
 
     with open('evolution.tex', 'w') as f:
