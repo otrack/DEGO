@@ -19,7 +19,10 @@ def process_file(filename):
 
 def generate_pie(counter, typename):
     total = sum(counter.values())
+    print("total : ",total)
     most_common = counter.most_common(3)
+    print("most_common : ", counter.most_common(3))
+    print("sum : ", sum(count for _, count in most_common))
     others_count = total - sum(count for _, count in most_common)
 
     entries = []
