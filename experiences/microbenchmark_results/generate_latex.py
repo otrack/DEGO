@@ -19,7 +19,10 @@ def generate_latex_file(files, type):
             f.write("    xlabel={\\# threads},\n")
             f.write("    extra y ticks={1},\n")
             f.write("    extra y tick labels={$0$},\n")
-        f.write("    xticklabels={1,5,10,20,40,80},\n")
+        if type == "Queue":
+            f.write("    xticklabels={2,5,10,20,40,80},\n")
+        else:
+            f.write("    xticklabels={1,5,10,20,40,80},\n")
         f.write("    xtick={1,2,3,4,5,6},\n")
         f.write("    ytick={0,10,1.0E2,1.0E3,1.0E4,1.0E5,1.0E6,1.0E7,1.0E8,1.0E9,1.0E10,1.0E11},\n")
         f.write("    ymin=1,\n")
@@ -42,17 +45,19 @@ def generate_latex_file(files, type):
 
         for filename in files:
             f.write("    \\addplot coordinates {\n")
+            i = 1
             try:
                 with open(filename, 'r') as file:
                     #with open(os.path.basename(filename), 'r') as file:
                     for line in file:
                         try:
-                            x, y = line.strip().split()
+                            _, y = line.strip().split()
                         except ValueError:
                             print(filename)
                             print(line.strip().split())
 
-                        f.write(f"       ({x}, {y})\n")
+                        f.write(f"       ({i}, {y})\n")
+                        i += 1
             except FileNotFoundError:
                 print(f"File not found : {filename}")
             f.write("   };\n\n")
