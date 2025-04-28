@@ -82,7 +82,7 @@ def generate_latex_file(file_name_avg, file_name_proportion):
                     f.write(f"       ({x}, {y})\n")
         except FileNotFoundError:
             print(f"File not found : {file_name_proportion}")
-            
+
         f.write("   };\n\n")
         f.write("   \\end{axis}")
         
@@ -90,4 +90,4 @@ def generate_latex_file(file_name_avg, file_name_proportion):
 
 args = setUp_parser()
 
-generate_latex_file(args.files, args.type_obj)
+generate_latex_file(args.average, args.proportion)
