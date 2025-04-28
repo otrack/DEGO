@@ -2,37 +2,29 @@ import os
 import numpy as np
 
 def process_files_in_directory(input_dir):
-    files = os.listdir(input_dir)  # Récupérer tous les fichiers
+    files = os.listdir(input_dir)
     project_count = len(files)
     max_lines = 0
 
-    # Liste temporaire pour stocker le nombre de signes '+' pour chaque fichier
     file_plus_counts = []
 
-    # D'abord, calculer le nombre maximum de lignes dans un fichier et le nombre de signes '+' pour chaque fichier
     for filename in files:
         file_path = os.path.join(input_dir, filename)
         with open(file_path, 'r') as file:
-            line_count = sum(1 for _ in file)  # Compte le nombre total de lignes
+            line_count = sum(1 for _ in file)
             max_lines = max(max_lines, line_count)
-            
+
             file.seek(0)
 
-            # Compter le nombre de signes '+'
-            plus_count = sum(1 for line in file if line.strip().split()[2] == '+')  # Compter les '+' dans le fichier
-#            print(filename, plus_count)
-            file_plus_counts.append((filename, plus_count))  # Ajouter à la liste temporaire
+            plus_count = sum(1 for line in file if line.strip().split()[2] == '+')
+            file_plus_counts.append((filename, plus_count))
 
-    # Trier les fichiers en fonction du nombre de signes '+' (décroissant)
     file_plus_counts.sort(key=lambda x: x[1], reverse=True)
 
-    print(file_plus_counts)
-
-    # Initialiser les matrices avec `nan`
+    # Initialize matrices
     matrix_plus = np.full((project_count, max_lines), np.nan)
     matrix_minus = np.full((project_count, max_lines), np.nan)
 
-    # Parcourir chaque fichier trié et remplir les matrices
     for x, (filename, _) in enumerate(file_plus_counts):
         file_path = os.path.join(input_dir, filename)
         with open(file_path, 'r') as file:
@@ -42,10 +34,8 @@ def process_files_in_directory(input_dir):
                     modification_count, java_file, sign = int(parts[0]), parts[1], parts[2]
                     if sign == '+':
                         matrix_plus[x, y] = modification_count
-                        matrix_minus[x, y] = np.nan
                     elif sign == '-':
                         matrix_minus[x, y] = modification_count
-                        matrix_plus[x, y] = np.nan
 
     return matrix_plus, matrix_minus
 
@@ -60,18 +50,27 @@ def format_matrix_for_tikz(matrix):
     formatted_output += "};\n"
     return formatted_output
 
+def save_to_file(content, filename):
+    with open(filename, 'w') as f:
+        f.write(content)
+
 def sort_matrix_columns_by_nan(matrix):
-    nan_counts = np.isnan(matrix).sum(axis=0)  # Compter les nan dans chaque colonne
-    sorted_indices = np.argsort(nan_counts)    # Indices triés par nombre croissant de nan
+    nan_counts = np.isnan(matrix).sum(axis=0)
+    sorted_indices = np.argsort(nan_counts)
     return matrix[:, sorted_indices]
 
-# Exemple d'utilisation
-input_dir = 'analyse_hot_file_sorted'  # Dossier d'entrée contenant les fichiers à analyser
+# === MAIN EXECUTION ===
+
+input_dir = 'analyse_hot_file_sorted'  # Folder containing input files
+
 matrix_plus, matrix_minus = process_files_in_directory(input_dir)
 
-# Afficher les matrices formatées pour TikZ
-print("Matrice pour les fichiers avec signe '+':")
-print(format_matrix_for_tikz(matrix_plus))
-#
-print("Matrice pour les fichiers avec signe '-':")
-print(format_matrix_for_tikz(matrix_minus))
+# Format matrices
+tikz_plus = format_matrix_for_tikz(matrix_plus)
+tikz_minus = format_matrix_for_tikz(matrix_minus)
+
+# Save to .tex files
+save_to_file(tikz_plus, 'include_shared_object.tex')
+save_to_file(tikz_minus, 'not_include_shared_object.tex')
+
+print("Files 'include_shared_object.tex' and 'not_include_shared_object.tex' generated successfully.")

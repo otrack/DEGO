@@ -21,10 +21,7 @@ def generate_pie(counter, typename):
     total_invocations = sum(counter.values())
     most_common = counter.most_common(3)
 
-    # The names of the top 3 methods
     top_methods = set(method for method, _ in most_common)
-
-    # Methods that are not in top 3
     other_methods = [method for method in counter if method not in top_methods]
     other_invocations = sum(counter[method] for method in other_methods)
 
@@ -47,8 +44,14 @@ def main():
         filename = f"{typename}.txt"
         if os.path.exists(filename):
             counter = process_file(filename)
-            pie = generate_pie(counter, typename)
-            print(pie)
+            pie_code = generate_pie(counter, typename)
+
+            # Write the pie chart LaTeX code to a file
+            output_filename = f"pie_{typename}.tex"
+            with open(output_filename, 'w') as f:
+                f.write(pie_code + "\n")
+            
+            print(f"Generated {output_filename}")
         else:
             print(f"Warning: {filename} not found.")
 
