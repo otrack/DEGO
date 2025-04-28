@@ -24,7 +24,7 @@ def generate_latex_file(file_name_avg, file_name_proportion):
         f.write("    width=0.8\\textwidth,\n")
         f.write("    height=0.8\\textwidth,\n")
         f.write("    xlabel={Years},\n")
-        f.write("    x label style={anchor=north, below=-3mm},\n")
+        f.write("    x label style={anchor=north, below=1mm},\n")
         f.write("    ylabel={\#~Declarations},\n")
         f.write("    y label style={font=\\footnotesize},\n")
         f.write("    ymin=0,\n")
@@ -40,7 +40,7 @@ def generate_latex_file(file_name_avg, file_name_proportion):
         f.write("    every node near coord/.style={/pgf/number format/1000 sep=, rotate=45, yshift=-0.2em, xshift=0.6em, font=\\tiny},\n")
         f.write("    nodes near coords\n]\n")
 
-        f.write("    \\addplot[fill=orange!50!white,draw=RoyalBlue,] coordinates {\n")
+        f.write("    \\addplot[fill=orange!50!white,draw=MyRoyalBlue,] coordinates {\n")
         try:
             with open(file_name_avg, 'r') as file:
                 #with open(os.path.basename(filename), 'r') as file:
@@ -69,12 +69,12 @@ def generate_latex_file(file_name_avg, file_name_proportion):
         f.write("    axis y line*=right,\n")
         f.write("    ylabel near ticks,\n")
         f.write("    yticklabel pos=right,\n")
-        f.write("    ylabel={Proportion (\\%),\n")
+        f.write("    ylabel={Proportion (\\%)},\n")
         f.write("    axis x line=none,\n")
         f.write("    y label style={anchor=south, yshift=-2em, font=\\footnotesize},\n")
         f.write("    legend style={at={(0,-0.35)}, anchor=north, legend columns=2}\n]\n\n")
 
-        f.write("    \\addplot[RoyalBlue, thick, mark=*] coordinates {\n")
+        f.write("    \\addplot[MyRoyalBlue, thick, mark=*] coordinates {\n")
         try:
             with open(file_name_proportion, 'r') as file:
                 for line in file:
