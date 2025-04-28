@@ -13,6 +13,10 @@ def setUp_parser():
     return args
 
 def generate_latex_file(file_name_avg, file_name_proportion):
+
+    years=list("2015", "2018", "2021", "2024")
+
+
     with open('evolution.tex', 'w') as f:
         f.write("\\begin{axis}[\n")
         f.write("    ybar,\n")
@@ -47,12 +51,13 @@ def generate_latex_file(file_name_avg, file_name_proportion):
                         print(file_name_avg)
                         print(line.strip().split())
 
-                    f.write(f"       ({x}, {y})\n")
+                    if x in years:
+                        f.write(f"       ({x}, {y})\n")
         except FileNotFoundError:
             print(f"File not found : {file_name_avg}")
 
         f.write("   };\n\n")
-        f.write("   \\end{axis}")
+        f.write("\\end{axis}\n\n")
 
         f.write("\\begin{axis}[\n")
         f.write("    width=0.8\\textwidth,\n")
@@ -79,15 +84,14 @@ def generate_latex_file(file_name_avg, file_name_proportion):
                         print(file_name_proportion)
                         print(line.strip().split())
 
-                    f.write(f"       ({x}, {y})\n")
+                    if x in years:
+                        f.write(f"       ({x}, {y})\n")
         except FileNotFoundError:
             print(f"File not found : {file_name_proportion}")
 
         f.write("   };\n\n")
-        f.write("   \\end{axis}")
+        f.write("\\end{axis}\n")
         
-        f.write("   \\end{tikzpicture}")
-
 args = setUp_parser()
 
 generate_latex_file(args.average, args.proportion)
