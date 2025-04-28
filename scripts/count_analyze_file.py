@@ -28,12 +28,12 @@ def generate_pie_entries(counter):
     entries = []
     for method, count in most_common:
         proportion = (count / total_invocations) * 100
-        entries.append(f"{proportion:.1f}/\\scriptsize {method}")
+        entries.append(f"{proportion:.1f}/\\normalsize {method}")
 
     if other_methods:
         proportion = (other_invocations / total_invocations) * 100
         entries.append(
-            f"{proportion:.1f}/\\scriptsize \\textit{{\\shortstack[c]{{others\\\\({len(other_methods)})}}}}"
+            f"{proportion:.1f}/\\normalsize \\textit{{\\shortstack[c]{{others\\\\({len(other_methods)})}}}}"
         )
 
     entries_str = ", ".join(entries)
@@ -49,7 +49,7 @@ def generate_tikz_picture(pie_entries, typename, rotate_angle=115):
       \\fi}}
     \\newif\\ifprintnumber
     \\pie[rotate={rotate_angle}, radius=3, before number=\\printonlylargeenough{{10}}, after number=\\ifprintnumber\\%\\fi]{{{pie_entries}}}
-    \\node () at (-.2,-4) {{\\bf\\scriptsize\\code{{{typename}}}}};
+    \\node () at (-.2,-4) {{\\bf\\normalsize\\code{{{typename}}}}};
   \\end{{tikzpicture}}
 """
     return tikz
