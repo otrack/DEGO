@@ -41,6 +41,8 @@ def main():
             counter = process_file(filename)
             pie = generate_pie(counter, typename)
             print(pie)
+            print()
+            print()
         else:
             print(f"Warning: {filename} not found.")
 
