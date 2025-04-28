@@ -48,8 +48,8 @@ def generate_tikz_picture(pie_entries, typename, rotate_angle=115):
       \\printnumberfalse
       \\fi}}
     \\newif\\ifprintnumber
-    \\pie[rotate={rotate_angle}, radius=1.3, before number=\\printonlylargeenough{{10}}, after number=\\ifprintnumber\\%\\fi]{{{pie_entries}}}
-    \\node () at (-.2,-2) {{\\bf\\scriptsize\\code{{{typename}}}}};
+    \\pie[rotate={rotate_angle}, radius=3, before number=\\printonlylargeenough{{10}}, after number=\\ifprintnumber\\%\\fi]{{{pie_entries}}}
+    \\node () at (-.2,-4) {{\\bf\\scriptsize\\code{{{typename}}}}};
   \\end{{tikzpicture}}
 """
     return tikz
