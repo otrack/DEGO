@@ -18,21 +18,26 @@ def process_file(filename):
     return counter
 
 def generate_pie(counter, typename):
-    total = sum(counter.values())
-    print("total : ",total)
+    total_invocations = sum(counter.values())
     most_common = counter.most_common(3)
-    print("most_common : ", counter.most_common(3))
-    print("sum : ", sum(count for _, count in most_common))
-    others_count = total - sum(count for _, count in most_common)
+
+    # The names of the top 3 methods
+    top_methods = set(method for method, _ in most_common)
+
+    # Methods that are not in top 3
+    other_methods = [method for method in counter if method not in top_methods]
+    other_invocations = sum(counter[method] for method in other_methods)
 
     entries = []
     for method, count in most_common:
-        proportion = (count / total) * 100
+        proportion = (count / total_invocations) * 100
         entries.append(f"{proportion:.1f}/\\scriptsize {method}")
 
-    if others_count > 0:
-        proportion = (others_count / total) * 100
-        entries.append(f"{proportion:.1f}/\\scriptsize \\textit{{\\shortstack[c]{{others\\\\({others_count})}}}}")
+    if other_methods:
+        proportion = (other_invocations / total_invocations) * 100
+        entries.append(
+            f"{proportion:.1f}/\\scriptsize \\textit{{\\shortstack[c]{{others\\\\({len(other_methods)})}}}}"
+        )
 
     entries_str = ", ".join(entries)
     return f"\\pie[rotate=115, radius=1.3, before number=\\printonlylargeenough{{10}}, after number=\\ifprintnumber\\%\\fi]{{{entries_str}}} % {typename}"
@@ -44,8 +49,6 @@ def main():
             counter = process_file(filename)
             pie = generate_pie(counter, typename)
             print(pie)
-            print()
-            print()
         else:
             print(f"Warning: {filename} not found.")
 
