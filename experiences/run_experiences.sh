@@ -4,9 +4,9 @@
 trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
-nbTest=1
-benchmarkTime=20
-warmingUpTime=20
+nbTest=2
+benchmarkTime=5
+warmingUpTime=1
 nbHashCode=10000000
 nbOps=10000000
 nbThreads=("1" "80")
@@ -21,111 +21,136 @@ declare -A params
 
 # Experience Figure 9
 
-#params[juc]="-c juc.Counter -s ConcurrentHashSet -q Queue -m ConcurrentSkipListMap"
-#params[dego]="-c CounterIncrementOnly -s ConcurrentHashSet -q QueueMASP -m ExtendedSegmentedSkipListMap"
-#
-#alphas=("1")
-#
-#> perf_retwis_fig_9.txt
-#
-#for impl in "${!params[@]}";
-#do
-#    for alpha in "${alphas[@]}";
-#    do
-#        for nbUsersInit in 100000 500000 1000000
-#        do
-#            for nbThread in 1 5 10 20 40 80
-#            do
-#                nbOps=$((1000000*nbThread))
-#                for (( c=1; c<=nbTest; c++ ))
-#                do
-#                    perf=$(perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh ${params["${impl}"]} -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${impl}_${nbThread}" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z | grep -i "completion time :" | awk '{print $6}' | sed s/\(//g)
-#                    echo ${impl}";"${alpha}";"${nbUsersInit}";"${nbThread}";"${perf} >> perf_retwis_fig_9.txt
-#                done
-#            done
-#        done
-#    done
-#done
-#
-#params=()
-#params[dap]="-c CounterIncrementOnly -s ShardedHashSet -q ShardedLinkedList -m ShardedSkipListMap"
-#
-#for impl in "${!params[@]}";
-#do
-#    for alpha in "${alphas[@]}";
-#    do
-#        for nbUsersInit in 100000 500000 1000000
-#        do
-#            for nbThread in 1 5 10 20 40 80
-#            do
-#                nbOps=$((1000000*nbThread))
-#                for (( c=1; c<=nbTest; c++ ))
-#                do
-#                    perf=$(perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh ${params["${impl}"]} -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${impl}_${nbThread}" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z -D | grep -i "completion time :" | awk '{print $6}' | sed s/\(//g)
-#                    echo ${impl}";"${alpha}";"${nbUsersInit}";"${nbThread}";"${perf} >> perf_retwis_fig_9.txt
-#                done
-#            done
-#        done
-#    done
-#done
+params[juc]="-c juc.Counter -s ConcurrentHashSet -q Queue -m ConcurrentSkipListMap"
+params[dego]="-c CounterIncrementOnly -s ConcurrentHashSet -q QueueMASP -m ExtendedSegmentedSkipListMap"
+
+alphas=("1")
+
+> results_retwis_fig_9.txt
+
+for impl in "${!params[@]}";
+do
+    for alpha in "${alphas[@]}";
+    do
+        for nbUsersInit in 100000 500000 1000000
+        do
+            for nbThread in 1 5 10 20 40 80
+            do
+                nbOps=$((1000000*nbThread))
+                for (( c=1; c<=nbTest; c++ ))
+                do
+                    perf=$(perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh ${params["${impl}"]} -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${impl}_${nbThread}" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z | grep -i "completion time :" | awk '{print $6}' | sed s/\(//g)
+                    echo ${impl}";"${alpha}";"${nbUsersInit}";"${nbThread}";"${perf} >> results_retwis_fig_9.txt
+                done
+            done
+        done
+    done
+done
+
+params=()
+params[dap]="-c CounterIncrementOnly -s ShardedHashSet -q ShardedLinkedList -m ShardedSkipListMap"
+
+for impl in "${!params[@]}";
+do
+    for alpha in "${alphas[@]}";
+    do
+        for nbUsersInit in 100000 500000 1000000
+        do
+            for nbThread in 1 5 10 20 40 80
+            do
+                nbOps=$((1000000*nbThread))
+                for (( c=1; c<=nbTest; c++ ))
+                do
+                    perf=$(perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh ${params["${impl}"]} -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${impl}_${nbThread}" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z -D | grep -i "completion time :" | awk '{print $6}' | sed s/\(//g)
+                    echo ${impl}";"${alpha}";"${nbUsersInit}";"${nbThread}";"${perf} >> results_retwis_fig_9.txt
+                done
+            done
+        done
+    done
+done
+
+python3.11 generate_retwis_graph.py -f results_retwis_fig_9.txt -o retwis_results/result.tex -t 1
 
 # Experience Figure 10
 
-#params=()
-#params[juc]="-c juc.Counter -s ConcurrentHashSet -q Queue -m ConcurrentSkipListMap"
-#params[dego]="-c CounterIncrementOnly -s ConcurrentHashSet -q QueueMASP -m ExtendedSegmentedSkipListMap"
-#
-#alphas=("0.01" "0.1" "1")
-#
-#> perf_retwis_fig_10.txt
-#
-#for impl in "${!params[@]}";
-#do
-#    for alpha in "${alphas[@]}";
-#    do
-#        for nbUsersInit in 1000000
-#        do
-#            for nbThread in 1 5 10 20 40 80
-#            do
-#                nbOps=$((1000000*nbThread))
-#                for (( c=1; c<=nbTest; c++ ))
-#                do
-#                    perf=$(perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh ${params["${impl}"]} -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${impl}_${nbThread}" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z -D | grep -i "completion time :" | awk '{print $6}' | sed s/\(//g)
-#                    echo ${impl}";"${alpha}";"${nbUsersInit}";"${nbThread}";"${perf} >> perf_retwis_fig_10.txt
-#                done
-#            done
-#        done
-#    done
-#done
-#
-#params=()
-#params[dap]="-c CounterIncrementOnly -s ShardedHashSet -q ShardedLinkedList -m ShardedSkipListMap"
-#
-#for impl in "${!params[@]}";
-#do
-#    for alpha in "${alphas[@]}";
-#    do
-#        for nbUsersInit in 1000000
-#        do
-#            for nbThread in 1 5 10 20 40 80
-#            do
-#                nbOps=$((1000000*nbThread))
-#                for (( c=1; c<=nbTest; c++ ))
-#                do
-#                    perf=$(perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh ${params["${impl}"]} -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${impl}_${nbThread}" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z -D | grep -i "completion time :" | awk '{print $6}' | sed s/\(//g)
-#                    echo ${impl}";"${alpha}";"${nbUsersInit}";"${nbThread}";"${perf} >> perf_retwis_fig_10.txt
-#                done
-#            done
-#        done
-#    done
-#done
+params=()
+params[juc]="-c juc.Counter -s ConcurrentHashSet -q Queue -m ConcurrentSkipListMap"
+
+alphas=("0.01" "0.1" "1")
+
+> results_retwis_fig_10.txt
+
+for impl in "${!params[@]}";
+do
+    for alpha in "${alphas[@]}";
+    do
+        for nbUsersInit in 1000000
+        do
+            for nbThread in 1 5 10 20 40 80
+            do
+                nbOps=$((1000000*nbThread))
+                for (( c=1; c<=nbTest; c++ ))
+                do
+                    perf=$(perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh ${params["${impl}"]} -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${impl}_${nbThread}" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z -D | grep -i "completion time :" | awk '{print $6}' | sed s/\(//g)
+                    echo ${impl}";"${alpha}";"${nbUsersInit}";"${nbThread}";"${perf} >> results_retwis_fig_10.txt
+                done
+            done
+        done
+    done
+done
+
+params=()
+params[dap]="-c CounterIncrementOnly -s ShardedHashSet -q ShardedLinkedList -m ShardedSkipListMap"
+
+for impl in "${!params[@]}";
+do
+    for alpha in "${alphas[@]}";
+    do
+        for nbUsersInit in 1000000
+        do
+            for nbThread in 1 5 10 20 40 80
+            do
+                nbOps=$((1000000*nbThread))
+                for (( c=1; c<=nbTest; c++ ))
+                do
+                    perf=$(perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh ${params["${impl}"]} -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${impl}_${nbThread}" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z -D | grep -i "completion time :" | awk '{print $6}' | sed s/\(//g)
+                    echo ${impl}";"${alpha}";"${nbUsersInit}";"${nbThread}";"${perf} >> results_retwis_fig_10.txt
+                done
+            done
+        done
+    done
+done
+
+params=()
+params[dego]="-c CounterIncrementOnly -s ConcurrentHashSet -q QueueMASP -m ExtendedSegmentedSkipListMap"
+
+for impl in "${!params[@]}";
+do
+    for alpha in "${alphas[@]}";
+    do
+        for nbUsersInit in 1000000
+        do
+            for nbThread in 1 5 10 20 40 80
+            do
+                nbOps=$((1000000*nbThread))
+                for (( c=1; c<=nbTest; c++ ))
+                do
+                    perf=$(perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh ${params["${impl}"]} -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${impl}_${nbThread}" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z -D | grep -i "completion time :" | awk '{print $6}' | sed s/\(//g)
+                    echo ${impl}";"${alpha}";"${nbUsersInit}";"${nbThread}";"${perf} >> results_retwis_fig_10.txt
+                done
+            done
+        done
+    done
+done
+
+python3.11 generate_retwis_graph.py -f results_retwis_fig_10.txt -o retwis_results/alpha.tex -t 2
 
 # Experience Figure 6
 
 initSize=16384
 range=32768
-benchmarkTime=10
-warmingUpTime=5
+benchmarkTime=5
+warmingUpTime=1
 objects=("Counter" "CounterIncrementOnly" "LongAdder" "ConcurrentHashMap" "ExtendedSegmentedHashMap" "ConcurrentSkipListMap" "ExtendedSegmentedSkipListMap")
 ratio="100 0 0"
 
@@ -138,22 +163,22 @@ for object in "${objects[@]}"; do
         python3.11 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
     done
   done
-  python3.11 microbenchmark_results/compute_avg_throughput.py -t "$object" -typeOp ALL -p microbenchmark_results/avg_perf -u 1000
+  python3.11 compute_avg_throughput.py -t "$object" -typeOp ALL -p microbenchmark_results/avg_perf -u 1000
 done
 
-python3.11 microbenchmark_results/generate_latex.py -f microbenchmark_results/avg_perf/ConcurrentHashMap_ALL.txt -f microbenchmark_results/avg_perf/ExtendedSegmentedHashMap_ALL.txt -t HashMap
-python3.11 microbenchmark_results/generate_latex.py -f microbenchmark_results/avg_perf/ConcurrentSkipListMap_ALL.txt -f microbenchmark_results/avg_perf/ExtendedSegmentedSkipListMap_ALL.txt -t SkipListMap
-python3.11 microbenchmark_results/generate_latex.py -f microbenchmark_results/avg_perf/Counter_ALL.txt -f microbenchmark_results/avg_perf/CounterIncrementOnly_ALL.txt -f microbenchmark_results/avg_perf/LongAdder_ALL.txt -t Counter
+python3.11 generate_latex.py -f microbenchmark_results/avg_perf/ConcurrentHashMap_ALL.txt -f microbenchmark_results/avg_perf/ExtendedSegmentedHashMap_ALL.txt -t HashMap
+python3.11 generate_latex.py -f microbenchmark_results/avg_perf/ConcurrentSkipListMap_ALL.txt -f microbenchmark_results/avg_perf/ExtendedSegmentedSkipListMap_ALL.txt -t SkipListMap
+python3.11 generate_latex.py -f microbenchmark_results/avg_perf/Counter_ALL.txt -f microbenchmark_results/avg_perf/CounterIncrementOnly_ALL.txt -f microbenchmark_results/avg_perf/LongAdder_ALL.txt -t Counter
 
 # Saving 100% update results for Figure 7
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/100 -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/100 -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/100 -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/100 -u 1000 -d
+python3.11 compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/100 -u 1000 -d
+python3.11 compute_avg_throughput.py -t ConcurrentSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/100 -u 1000 -d
+python3.11 compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/100 -u 1000 -d
+python3.11 compute_avg_throughput.py -t ExtendedSegmentedSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/100 -u 1000 -d
 
 # Saving 16k dataset size for Figure 8
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/16k -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/16k -u 1000 -d
+python3.11 compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/16k -u 1000 -d
+python3.11 compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/16k -u 1000 -d
 
 objects=("ConcurrentLinkedQueue" "QueueMASP")
 
@@ -166,10 +191,10 @@ for object in "${objects[@]}"; do
         python3.11 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
     done
   done
-  python3.11 microbenchmark_results/compute_avg_throughput.py -t "$object" -typeOp ALL -p microbenchmark_results/avg_perf -u 1000
+  python3.11 compute_avg_throughput.py -t "$object" -typeOp ALL -p microbenchmark_results/avg_perf -u 1000
 done
 
-python3.11 microbenchmark_results/generate_latex.py -f microbenchmark_results/avg_perf/ConcurrentLinkedQueue_ALL.txt -f microbenchmark_results/avg_perf/QueueMASP_ALL.txt -t Queue
+python3.11 generate_latex.py -f microbenchmark_results/avg_perf/ConcurrentLinkedQueue_ALL.txt -f microbenchmark_results/avg_perf/QueueMASP_ALL.txt -t Queue
 
 objects=("AtomicWriteOnceReference" "AtomicReference")
 ratio="0 100 0"
@@ -184,10 +209,10 @@ for object in "${objects[@]}"; do
     done
   done
 
-  python3.11 microbenchmark_results/compute_avg_throughput.py -t "$object" -typeOp ALL -p microbenchmark_results/avg_perf -u 1000
+  python3.11 compute_avg_throughput.py -t "$object" -typeOp ALL -p microbenchmark_results/avg_perf -u 1000
 done
 
-python3.11 microbenchmark_results/generate_latex.py -f microbenchmark_results/avg_perf/AtomicReference_ALL.txt -f microbenchmark_results/avg_perf/AtomicWriteOnceReference_ALL.txt -t Reference
+python3.11 generate_latex.py -f microbenchmark_results/avg_perf/AtomicReference_ALL.txt -f microbenchmark_results/avg_perf/AtomicWriteOnceReference_ALL.txt -t Reference
 
 ######################### Experience Figure 7
 
@@ -206,10 +231,10 @@ for object in "${objects[@]}"; do
   done
 done
 
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/25 -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/25 -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/25 -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/25 -u 1000 -d
+python3.11 compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/25 -u 1000 -d
+python3.11 compute_avg_throughput.py -t ConcurrentSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/25 -u 1000 -d
+python3.11 compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/25 -u 1000 -d
+python3.11 compute_avg_throughput.py -t ExtendedSegmentedSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/25 -u 1000 -d
 
 ratio="50 50 0"
 
@@ -224,10 +249,10 @@ for object in "${objects[@]}"; do
   done
 done
 
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/50 -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/50 -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/50 -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/50 -u 1000 -d
+python3.11 compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/50 -u 1000 -d
+python3.11 compute_avg_throughput.py -t ConcurrentSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/50 -u 1000 -d
+python3.11 compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/50 -u 1000 -d
+python3.11 compute_avg_throughput.py -t ExtendedSegmentedSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/50 -u 1000 -d
 
 ratio="75 25 0"
 
@@ -242,15 +267,15 @@ for object in "${objects[@]}"; do
   done
 done
 
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/75 -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/75 -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/75 -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/75 -u 1000 -d
+python3.11 compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/75 -u 1000 -d
+python3.11 compute_avg_throughput.py -t ConcurrentSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/75 -u 1000 -d
+python3.11 compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/75 -u 1000 -d
+python3.11 compute_avg_throughput.py -t ExtendedSegmentedSkipListMap -typeOp ALL -p microbenchmark_results/avg_perf/75 -u 1000 -d
 
-python3.11 microbenchmark_results/generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 25
-python3.11 microbenchmark_results/generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 50
-python3.11 microbenchmark_results/generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 75
-python3.11 microbenchmark_results/generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 100
+python3.11 generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 25
+python3.11 generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 50
+python3.11 generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 75
+python3.11 generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 100
 
 ################## Figure 8
 
@@ -271,8 +296,8 @@ for object in "${objects[@]}"; do
   done
 done
 
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/32k -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/32k -u 1000 -d
+python3.11 compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/32k -u 1000 -d
+python3.11 compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/32k -u 1000 -d
 
 initSize=65536
 range=131072
@@ -288,7 +313,7 @@ for object in "${objects[@]}"; do
   done
 done
 
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/64k -u 1000 -d
-python3.11 microbenchmark_results/compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/64k -u 1000 -d
+python3.11 compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/64k -u 1000 -d
+python3.11 compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/64k -u 1000 -d
 
-python3.11 microbenchmark_results/generate_histograme_latex_size.py -od ExtendedSegmentedHashMap -oj ConcurrentHashMap -s 16k -s 32k -s 64k
+python3.11 generate_histograme_latex_size.py -od ExtendedSegmentedHashMap -oj ConcurrentHashMap -s 16k -s 32k -s 64k
