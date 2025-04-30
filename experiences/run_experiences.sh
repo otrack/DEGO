@@ -4,6 +4,8 @@
 trap "pkill -KILL -P $$; exit 255" SIGINT SIGTERM
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
+./test.sh -x
+
 nbTest=2
 benchmarkTime=5
 warmingUpTime=1
