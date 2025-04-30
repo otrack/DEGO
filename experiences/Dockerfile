@@ -31,7 +31,7 @@ RUN pip install --no-cache-dir gdown
 WORKDIR /app
 
 # Copier les scripts dans le conteneur
-COPY download.sh run_experiences.sh ./
+COPY download.sh run_experiences.sh test.sh *.py ./
 
 # Rendre les scripts exécutables
 RUN chmod +x download.sh run_experiences.sh
