@@ -35,6 +35,8 @@ WORKDIR /app
 # Copier les scripts dans le conteneur
 COPY experiences/download.sh run_experiences.sh test.sh run_mining.sh *.py ./
 
+COPY java/ /app/java/
+
 # Rendre les scripts exécutables
 RUN chmod +x download.sh run_experiences.sh
 
