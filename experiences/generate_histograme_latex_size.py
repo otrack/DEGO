@@ -13,7 +13,7 @@ def setUp_parser():
 
 def generate_latex(deg_files, java_files):
     try:
-        with open(deg_files[0], 'r') as df1, open(deg_files[1], 'r') as df2, open(deg_files[2], 'r') as df3, open(java_files[0], 'r') as jf1, open(java_files[1], 'r') as jf2, open(java_files[2], 'r') as jf3, open("sizes.tex", 'w') as out:
+        with open(deg_files[0], 'r') as df1, open(deg_files[1], 'r') as df2, open(deg_files[2], 'r') as df3, open(java_files[0], 'r') as jf1, open(java_files[1], 'r') as jf2, open(java_files[2], 'r') as jf3, open("results/sizes.tex", 'w') as out:
 
             out.write("\\begin{axis}[\n")
             out.write("    width=\\linewidth,\n")

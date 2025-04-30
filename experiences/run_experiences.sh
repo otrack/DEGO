@@ -69,7 +69,7 @@ do
     done
 done
 
-python3.11 generate_retwis_graph.py -f results_retwis_fig_9.txt -o retwis_results/result.tex -t 1
+python3.11 generate_retwis_graph.py -f results_retwis_fig_9.txt -o results/retwis.tex -t 1
 
 # Experience Figure 10
 
@@ -143,7 +143,7 @@ do
     done
 done
 
-python3.11 generate_retwis_graph.py -f results_retwis_fig_10.txt -o retwis_results/alpha.tex -t 2
+python3.11 generate_retwis_graph.py -f results_retwis_fig_10.txt -o results/retwis_alpha.tex -t 2
 
 # Experience Figure 6
 
@@ -164,9 +164,9 @@ for object in "${objects[@]}"; do
   python3.11 compute_avg_throughput.py -t "$object" -typeOp ALL -p microbenchmark_results/avg_perf -u 1000
 done
 
-python3.11 generate_latex.py -f microbenchmark_results/avg_perf/ConcurrentHashMap_ALL.txt -f microbenchmark_results/avg_perf/ExtendedSegmentedHashMap_ALL.txt -t HashMap
-python3.11 generate_latex.py -f microbenchmark_results/avg_perf/ConcurrentSkipListMap_ALL.txt -f microbenchmark_results/avg_perf/ExtendedSegmentedSkipListMap_ALL.txt -t SkipListMap
-python3.11 generate_latex.py -f microbenchmark_results/avg_perf/Counter_ALL.txt -f microbenchmark_results/avg_perf/CounterIncrementOnly_ALL.txt -f microbenchmark_results/avg_perf/LongAdder_ALL.txt -t Counter
+python3.11 generate_latex.py -f microbenchmark_results/avg_perf/ConcurrentHashMap_ALL.txt -f microbenchmark_results/avg_perf/ExtendedSegmentedHashMap_ALL.txt -t results/HashMap
+python3.11 generate_latex.py -f microbenchmark_results/avg_perf/ConcurrentSkipListMap_ALL.txt -f microbenchmark_results/avg_perf/ExtendedSegmentedSkipListMap_ALL.txt -t results/SkipListMap
+python3.11 generate_latex.py -f microbenchmark_results/avg_perf/Counter_ALL.txt -f microbenchmark_results/avg_perf/CounterIncrementOnly_ALL.txt -f microbenchmark_results/avg_perf/LongAdder_ALL.txt -t results/Counter
 
 # Saving 100% update results for Figure 7
 python3.11 compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbenchmark_results/avg_perf/100 -u 1000 -d
@@ -191,7 +191,7 @@ for object in "${objects[@]}"; do
   python3.11 compute_avg_throughput.py -t "$object" -typeOp ALL -p microbenchmark_results/avg_perf -u 1000
 done
 
-python3.11 generate_latex.py -f microbenchmark_results/avg_perf/ConcurrentLinkedQueue_ALL.txt -f microbenchmark_results/avg_perf/QueueMASP_ALL.txt -t Queue
+python3.11 generate_latex.py -f microbenchmark_results/avg_perf/ConcurrentLinkedQueue_ALL.txt -f microbenchmark_results/avg_perf/QueueMASP_ALL.txt -t results/Queue
 
 objects=("AtomicWriteOnceReference" "AtomicReference")
 ratio="0 100 0"
@@ -208,7 +208,7 @@ for object in "${objects[@]}"; do
   python3.11 compute_avg_throughput.py -t "$object" -typeOp ALL -p microbenchmark_results/avg_perf -u 1000
 done
 
-python3.11 generate_latex.py -f microbenchmark_results/avg_perf/AtomicReference_ALL.txt -f microbenchmark_results/avg_perf/AtomicWriteOnceReference_ALL.txt -t Reference
+python3.11 generate_latex.py -f microbenchmark_results/avg_perf/AtomicReference_ALL.txt -f microbenchmark_results/avg_perf/AtomicWriteOnceReference_ALL.txt -t results/Reference
 
 ######################### Experience Figure 7
 
