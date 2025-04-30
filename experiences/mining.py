@@ -246,7 +246,7 @@ def main(repo_url, list_clazz, evolution, hot):
     software = repo_url.split('/')[-1]
     repo_path = os.path.join(TMPDIR, software)
     print(f"Cloning {repo_url} into {repo_path}...")
-    repo = Repo.clone_from(repo_url, repo_path)
+    repo = git.Repo.clone_from(repo_url, repo_path)
 
     if evolution:
         oldest_commit_year = get_repo_age(repo)
