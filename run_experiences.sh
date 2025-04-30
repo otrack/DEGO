@@ -38,6 +38,7 @@ do
         do
             for nbThread in 1 5 10 20 40 80
             do
+                echo ${nbThread}
                 nbOps=$((1000000*nbThread))
                 for (( c=1; c<=nbTest; c++ ))
                 do
