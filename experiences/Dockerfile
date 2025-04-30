@@ -9,14 +9,14 @@ ENV TZ=Europe/Paris
 RUN apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y software-properties-common wget curl unzip git gnupg ca-certificates lsb-release \
-    && add-apt-repository ppa:deadsnakes/ppa \
+    && add-apt-repository ppa:deadsnakes/ppa -y \
     && apt-get update \
     && apt-get install -y \
-        python3.11 \
-        python3.11-dev \
-        python3.11-venv \
-        python3-pip \
-        openjdk-17-jdk \   # Utilisation de OpenJDK 17
+       python3.11 \
+       python3.11-dev \
+       python3.11-venv \
+       python3-pip \
+       openjdk-17-jdk \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -27,12 +27,11 @@ RUN ln -sf /usr/bin/python3.11 /usr/bin/python \
 # Installer gdown pour télécharger depuis Google Drive
 RUN pip install --no-cache-dir gdown
 
-# Créer le répertoire de travail
+# Définir le répertoire de travail
 WORKDIR /app
 
 # Copier les scripts dans le conteneur
-COPY download.sh .
-COPY run_experiences.sh .
+COPY download.sh run_experiences.sh ./
 
 # Rendre les scripts exécutables
 RUN chmod +x download.sh run_experiences.sh
