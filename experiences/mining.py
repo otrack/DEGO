@@ -93,7 +93,7 @@ def analyze_calls_in_methods(file_path, clazz):
             is_private = re.search(rf'private\s+[^\n]*\b{var}\b', content)
 
             if is_private:
-                dico_vars[var] = list()
+                dico_vars[var] = defaultdict(list)
 
     with open(file_path, 'r', encoding='utf-8') as file:
         lines = file.readlines()
