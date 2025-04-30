@@ -250,7 +250,7 @@ def main(repo_url, list_clazz, evolution, hot):
 
     if evolution:
         oldest_commit_year = get_repo_age(repo)
-        current_year = datetime.datetime.now().year
+        current_year = datetime.now().year
 
         if current_year - oldest_commit_year < 10:
             print(f"Repo {repo_url} has less than 10 years of history. Skipping.")
@@ -266,7 +266,7 @@ def main(repo_url, list_clazz, evolution, hot):
                     nb_match[clazz] = 0
 
                 for commit in repo.iter_commits():
-                    commit_year = datetime.datetime.fromtimestamp(commit.committed_date).year
+                    commit_year = datetime.fromtimestamp(commit.committed_date).year
                     if commit_year == year:
                         target_commit = commit
                         break
