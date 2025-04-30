@@ -1,9 +1,9 @@
 #!/bin/bash
 
 repos=(
-#    "https://github.com/apache/ignite"
-#    "https://github.com/apache/hadoop"
-#    "https://github.com/apache/cassandra"
+    "https://github.com/apache/ignite"
+    "https://github.com/apache/hadoop"
+    "https://github.com/apache/cassandra"
 #    "https://github.com/apache/dubbo"
 #    "https://github.com/apache/kafka"
     #"https://github.com/apache/incubator_seata"
