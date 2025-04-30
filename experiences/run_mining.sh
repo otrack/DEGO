@@ -82,8 +82,3 @@ python3.11 count_analyze_file.py
 python3.11 sumup_yearly.py yearly_evolution_ConcurrentHashMap.txt
 python3.11 sumup_yearly.py yearly_evolution_ConcurrentHashMap_proportion.txt
 python3.11 generate_latex_evolution.py -a yearly_evolution_ConcurrentHashMap_avg.txt -p yearly_evolution_ConcurrentHashMap_proportion_avg.txt
-
-for clazz in "${classes[@]}"
-do
-    python3.11 ${clazz}
-done

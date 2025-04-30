@@ -317,3 +317,5 @@ python3.11 compute_avg_throughput.py -t ConcurrentHashMap -typeOp ALL -p microbe
 python3.11 compute_avg_throughput.py -t ExtendedSegmentedHashMap -typeOp ALL -p microbenchmark_results/avg_perf/64k -u 1000 -d
 
 python3.11 generate_histograme_latex_size.py -od ExtendedSegmentedHashMap -oj ConcurrentHashMap -s 16k -s 32k -s 64k
+
+./run_mining.sh
