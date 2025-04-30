@@ -153,7 +153,7 @@ def get_repo_age(repo):
     # Obtenir le premier commit (le plus ancien)
     oldest_commit = next(repo.iter_commits(reverse=True))
     # Récupérer l'année du plus ancien commit
-    oldest_commit_year = datetime.datetime.fromtimestamp(oldest_commit.committed_date).year
+    oldest_commit_year = datetime.fromtimestamp(oldest_commit.committed_date).year
     return oldest_commit_year
 
 def analyze_hot_files(repo_url):
