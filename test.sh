@@ -306,19 +306,19 @@ if [[ $typeTest == "Microbenchmark" ]]
 then
     if [[ $computeGCInfo == true ]]
     then
-	CLASSPATH=../java/target/*:../java/target/lib/* numactl --physcpubind="$cpuIDs" --membind=0 java ${JVM_ARGS} eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest $nbItemsPerThread -gcinfo | egrep "nbThread|benchmarkAvgTime|Start benchmark|End benchmark|G1 Evacuation Pause" > "$type"_gcinfo.log
+	CLASSPATH=./java/target/*:./java/target/lib/* numactl --physcpubind="$cpuIDs" --membind=0 java ${JVM_ARGS} eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest $nbItemsPerThread -gcinfo | egrep "nbThread|benchmarkAvgTime|Start benchmark|End benchmark|G1 Evacuation Pause" > "$type"_gcinfo.log
 	python3 analyse_gc.py $type $nbTest "$nbUserInit"
     else
-	CLASSPATH=../java/target/*:../java/target/lib/* numactl --physcpubind="$cpuIDs" --membind=0 java ${JVM_ARGS} eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest $nbItemsPerThread
+	CLASSPATH=./java/target/*:./java/target/lib/* numactl --physcpubind="$cpuIDs" --membind=0 java ${JVM_ARGS} eu.cloudbutton.dobj.benchmark.Microbenchmark -type $type -ratios $ratio -nbTest $nbTest $nbThreads $workloadTime $warmingUpTime $nbInitialAdd $print $save $printFail $asymmetric $collisionKey $quickTest $nbItemsPerThread
     fi
 elif [[ $typeTest == "Retwis" ]]
 then
     if [[ $computeGCInfo == true ]]
     then
-	CLASSPATH=../java/target/*:../java/target/lib/* ${NUMA} java ${JVM_ARGS} eu.cloudbutton.dobj.benchmark.Retwis ${RETWIS_ARGS} | egrep "nbThread|benchmarkAvgTime|Start benchmark|End benchmark|G1 Evacuation Pause" > "$tag"_gcinfo.log
+	CLASSPATH=./java/target/*:./java/target/lib/* ${NUMA} java ${JVM_ARGS} eu.cloudbutton.dobj.benchmark.Retwis ${RETWIS_ARGS} | egrep "nbThread|benchmarkAvgTime|Start benchmark|End benchmark|G1 Evacuation Pause" > "$tag"_gcinfo.log
 	python3 analyse_gc.py $tag $nbTest $nbUserInit
     else
-	CLASSPATH=../java/target/*:../java/target/lib/* ${NUMA} java ${JVM_ARGS} eu.cloudbutton.dobj.benchmark.Retwis ${RETWIS_ARGS}
+	CLASSPATH=./java/target/*:./java/target/lib/* ${NUMA} java ${JVM_ARGS} eu.cloudbutton.dobj.benchmark.Retwis ${RETWIS_ARGS}
 	echo ${cmd}
 	eval ${cmd}
     fi
