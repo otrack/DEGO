@@ -302,7 +302,7 @@ def main(repo_url, list_clazz, evolution, hot):
         for java_file in java_files:
             # extract_imports(java_file)
             for clazz in list_clazz:
-                analyze_calls_in_methods(java_file, clazz)
+                # analyze_calls_in_methods(java_file, clazz)
                 analyze_file(java_file, clazz)
 
     # Supprimer le dépôt cloné après analyse
