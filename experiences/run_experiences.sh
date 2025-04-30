@@ -39,7 +39,7 @@ do
                 nbOps=$((1000000*nbThread))
                 for (( c=1; c<=nbTest; c++ ))
                 do
-                    perf=$(perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh ${params["${impl}"]} -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${impl}_${nbThread}" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z | grep -i "completion time :" | awk '{print $6}' | sed s/\(//g)
+                    perf=$(./test.sh ${params["${impl}"]} -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${impl}_${nbThread}" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z | grep -i "completion time :" | awk '{print $6}' | sed s/\(//g)
                     echo ${impl}";"${alpha}";"${nbUsersInit}";"${nbThread}";"${perf} >> results_retwis_fig_9.txt
                 done
             done
@@ -61,7 +61,7 @@ do
                 nbOps=$((1000000*nbThread))
                 for (( c=1; c<=nbTest; c++ ))
                 do
-                    perf=$(perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh ${params["${impl}"]} -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${impl}_${nbThread}" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z -D | grep -i "completion time :" | awk '{print $6}' | sed s/\(//g)
+                    perf=$(./test.sh ${params["${impl}"]} -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${impl}_${nbThread}" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z -D | grep -i "completion time :" | awk '{print $6}' | sed s/\(//g)
                     echo ${impl}";"${alpha}";"${nbUsersInit}";"${nbThread}";"${perf} >> results_retwis_fig_9.txt
                 done
             done
@@ -91,7 +91,7 @@ do
                 nbOps=$((1000000*nbThread))
                 for (( c=1; c<=nbTest; c++ ))
                 do
-                    perf=$(perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh ${params["${impl}"]} -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${impl}_${nbThread}" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z -D | grep -i "completion time :" | awk '{print $6}' | sed s/\(//g)
+                    perf=$(./test.sh ${params["${impl}"]} -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${impl}_${nbThread}" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z -D | grep -i "completion time :" | awk '{print $6}' | sed s/\(//g)
                     echo ${impl}";"${alpha}";"${nbUsersInit}";"${nbThread}";"${perf} >> results_retwis_fig_10.txt
                 done
             done
@@ -113,7 +113,7 @@ do
                 nbOps=$((1000000*nbThread))
                 for (( c=1; c<=nbTest; c++ ))
                 do
-                    perf=$(perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh ${params["${impl}"]} -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${impl}_${nbThread}" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z -D | grep -i "completion time :" | awk '{print $6}' | sed s/\(//g)
+                    perf=$(./test.sh ${params["${impl}"]} -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${impl}_${nbThread}" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z -D | grep -i "completion time :" | awk '{print $6}' | sed s/\(//g)
                     echo ${impl}";"${alpha}";"${nbUsersInit}";"${nbThread}";"${perf} >> results_retwis_fig_10.txt
                 done
             done
@@ -135,7 +135,7 @@ do
                 nbOps=$((1000000*nbThread))
                 for (( c=1; c<=nbTest; c++ ))
                 do
-                    perf=$(perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions -o perf.log ./test.sh ${params["${impl}"]} -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${impl}_${nbThread}" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z -D | grep -i "completion time :" | awk '{print $6}' | sed s/\(//g)
+                    perf=$(./test.sh ${params["${impl}"]} -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${impl}_${nbThread}" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z -D | grep -i "completion time :" | awk '{print $6}' | sed s/\(//g)
                     echo ${impl}";"${alpha}";"${nbUsersInit}";"${nbThread}";"${perf} >> results_retwis_fig_10.txt
                 done
             done
@@ -158,9 +158,7 @@ for object in "${objects[@]}"; do
   python3.11 rm_file.py "Microbenchmark" "$object"
   for nbThread in "${nbThreads[@]}"; do
     for (( c=1; c<=nbTest; c++ )) do
-
-        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m "$object" -t Microbenchmark -p -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
-        python3.11 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
+        ./test.sh -m "$object" -t Microbenchmark -p -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
     done
   done
   python3.11 compute_avg_throughput.py -t "$object" -typeOp ALL -p microbenchmark_results/avg_perf -u 1000
@@ -187,8 +185,7 @@ for object in "${objects[@]}"; do
 
   for nbThread in "${nbThreads[@]}"; do
     for (( c=1; c<=nbTest; c++ )) do
-        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m "$object" -t Microbenchmark -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread" -a
-        python3.11 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
+        ./test.sh -m "$object" -t Microbenchmark -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread" -a
     done
   done
   python3.11 compute_avg_throughput.py -t "$object" -typeOp ALL -p microbenchmark_results/avg_perf -u 1000
@@ -204,8 +201,7 @@ for object in "${objects[@]}"; do
 
   for nbThread in "${nbThreads[@]}"; do
     for (( c=1; c<=nbTest; c++ )) do
-        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m "$object" -t Microbenchmark -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
-        python3.11 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
+        ./test.sh -m "$object" -t Microbenchmark -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
     done
   done
 
@@ -224,9 +220,7 @@ for object in "${objects[@]}"; do
 
   for nbThread in "${nbThreads[@]}"; do
     for (( c=1; c<=nbTest; c++ )) do
-        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m "$object" -t Microbenchmark -p -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
-        python3.11 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
-
+        ./test.sh -m "$object" -t Microbenchmark -p -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
     done
   done
 done
@@ -243,8 +237,7 @@ for object in "${objects[@]}"; do
 
   for nbThread in "${nbThreads[@]}"; do
     for (( c=1; c<=nbTest; c++ )) do
-        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m "$object" -t Microbenchmark -p -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
-        python3.11 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
+        ./test.sh -m "$object" -t Microbenchmark -p -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
     done
   done
 done
@@ -261,8 +254,8 @@ for object in "${objects[@]}"; do
 
   for nbThread in "${nbThreads[@]}"; do
     for (( c=1; c<=nbTest; c++ )) do
-        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m "$object" -t Microbenchmark -p -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
-        python3.11 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
+        ./test.sh -m "$object" -t Microbenchmark -p -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
+
     done
   done
 done
@@ -290,8 +283,8 @@ for object in "${objects[@]}"; do
 
   for nbThread in "${nbThreads[@]}"; do
     for (( c=1; c<=nbTest; c++ )) do
-        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m "$object" -t Microbenchmark -p -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
-        python3.11 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
+        ./test.sh -m "$object" -t Microbenchmark -p -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
+
     done
   done
 done
@@ -307,8 +300,7 @@ for object in "${objects[@]}"; do
 
   for nbThread in "${nbThreads[@]}"; do
     for (( c=1; c<=nbTest; c++ )) do
-        perf stat --no-big-num -d -e cache-references,cache-misses,branches,branch-misses,cycles,instructions,l1d_pend_miss.pending_cycles_any,l2_rqsts.all_demand_miss,cycle_activity.stalls_total -o perf.log ./test.sh -m "$object" -t Microbenchmark -p -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
-        python3.11 analyse_perf.py perf.log "false" "$object" "" "$nbThread"
+        ./test.sh -m "$object" -t Microbenchmark -p -e -r "$ratio" -w $benchmarkTime -u $warmingUpTime -n $nbTest -i $initSize -d $range -g "$nbThread"
     done
   done
 done

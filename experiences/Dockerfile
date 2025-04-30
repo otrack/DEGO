@@ -17,7 +17,6 @@ RUN apt-get update \
         python3.11-venv \
         python3-pip \
         openjdk-17-jdk \   # Utilisation de OpenJDK 17
-        linux-perf \  # Outils de performance pour Ubuntu
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
