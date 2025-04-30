@@ -17,6 +17,7 @@ RUN apt-get update \
        python3.11-venv \
        python3-pip \
        openjdk-17-jdk \
+       numactl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -31,7 +32,7 @@ RUN pip install --no-cache-dir gdown
 WORKDIR /app
 
 # Copier les scripts dans le conteneur
-COPY download.sh run_experiences.sh test.sh *.py ./
+COPY download.sh run_experiences.sh test.sh run_mining.sh *.py ./
 
 # Rendre les scripts exécutables
 RUN chmod +x download.sh run_experiences.sh
