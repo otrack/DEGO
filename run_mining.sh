@@ -1,5 +1,5 @@
 #!/bin/bash
-
+echo "Figure 4 and 5"
 repos=(
     "https://github.com/apache/ignite"
 #    "https://github.com/apache/hadoop"

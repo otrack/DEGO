@@ -22,7 +22,7 @@ ratio="5 5 15 60 5 10"
 declare -A params
 
 # Experience Figure 9
-
+echo "Figure 9"
 params[juc]="-c juc.Counter -s ConcurrentHashSet -q Queue -m ConcurrentSkipListMap"
 params[dego]="-c CounterIncrementOnly -s ConcurrentHashSet -q QueueMASP -m ExtendedSegmentedSkipListMap"
 
@@ -74,7 +74,7 @@ done
 python3.11 generate_retwis_graph.py -f results_retwis_fig_9.txt -o results/retwis.tex -t 1
 
 # Experience Figure 10
-
+echo "Figure 10"
 params=()
 params[juc]="-c juc.Counter -s ConcurrentHashSet -q Queue -m ConcurrentSkipListMap"
 
@@ -148,7 +148,7 @@ done
 python3.11 generate_retwis_graph.py -f results_retwis_fig_10.txt -o results/retwis_alpha.tex -t 2
 
 # Experience Figure 6
-
+echo "Figure 6"
 initSize=16384
 range=32768
 benchmarkTime=5
@@ -213,6 +213,7 @@ done
 python3.11 generate_latex.py -f microbenchmark_results/avg_perf/AtomicReference_ALL.txt -f microbenchmark_results/avg_perf/AtomicWriteOnceReference_ALL.txt -t results/Reference
 
 ######################### Experience Figure 7
+echo "Figure 7"
 
 objects=("ConcurrentHashMap" "ExtendedSegmentedHashMap" "ConcurrentSkipListMap" "ExtendedSegmentedSkipListMap")
 ratio="25 75 0"
@@ -273,6 +274,7 @@ python3.11 generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f E
 python3.11 generate_histograme_latex.py -f ExtendedSegmentedHashMap_ALL.txt -f ExtendedSegmentedSkipListMap_ALL.txt -f ConcurrentHashMap_ALL.txt -f ConcurrentSkipListMap_ALL.txt -u 100
 
 ################## Figure 8
+echo "Figure 8"
 
 objects=("ConcurrentHashMap" "ExtendedSegmentedHashMap")
 ratio="100 0 0"
