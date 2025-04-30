@@ -16,8 +16,8 @@ RUN apt-get update \
         python3.11-dev \
         python3.11-venv \
         python3-pip \
-        openjdk-22-jdk \
-        perf \
+        openjdk-17-jdk \   # Utilisation de OpenJDK 17
+        linux-tools-common \  # Installation de perf
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
