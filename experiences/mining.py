@@ -140,7 +140,7 @@ def analyze_calls_in_methods(file_path, clazz):
             obj, method, arguments = match.groups()
 
             if dico_vars.keys().__contains__(obj):
-                if dico_vars[obj].keys().__contains__(current_method):
+                if current_method in dico_vars[obj]:
                     dico_vars[obj][current_method].append(method)
                 else:
                     dico_vars[obj][current_method] = list()
