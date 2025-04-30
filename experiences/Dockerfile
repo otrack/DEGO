@@ -31,6 +31,13 @@ RUN pip install --no-cache-dir gdown
 # Définir le répertoire de travail
 WORKDIR /app
 
+# 5) Copier le dossier java et test.sh
+COPY test.sh .
+
+# 6) Compiler le projet Java via ton script
+RUN chmod +x test.sh \
+ && ./test.sh -x
+
 # Copier les scripts dans le conteneur
 COPY download.sh run_experiences.sh test.sh run_mining.sh *.py ./
 
