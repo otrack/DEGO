@@ -70,15 +70,20 @@ done
 for repo in "${repos[@]}"
 do
     echo "Analyzing repository: ${repo}"
-#    python3.11 mining.py -r "${repo}" ${class_args} -hot
+    python3.11 mining.py -r "${repo}" ${class_args} -hot
     python3.11 mining.py -r "${repo}" ${class_args} -e
-#    python3.11 mining.py -r "${repo}" ${class_args}
+    python3.11 mining.py -r "${repo}" ${class_args}
 done
 
-#python3.11 sort_hot_file.py
-#python3.11 generate_matrice.py
 
-#for clazz in "${classes[@]}"
-#do
-#    class_args+="-c ${clazz} "
-#done
+python3.11 sort_hot_file.py
+python3.11 generate_matrice.py
+python3.11 count_analyze_file.py
+python3.11 sumup_yearly.py yearly_evolution_ConcurrentHashMap.txt
+python3.11 sumup_yearly.py yearly_evolution_ConcurrentHashMap_proportion.txt
+python3.11 generate_latex_evolution.py -a yearly_evolution_ConcurrentHashMap_avg.txt -p yearly_evolution_ConcurrentHashMap_proportion_avg.txt
+
+for clazz in "${classes[@]}"
+do
+    python3.11 ${clazz}
+done
