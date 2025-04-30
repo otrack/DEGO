@@ -17,7 +17,7 @@ RUN apt-get update \
         python3.11-venv \
         python3-pip \
         openjdk-17-jdk \   # Utilisation de OpenJDK 17
-        linux-tools-$(uname -r) \  # Installation de perf pour le noyau actuel
+        linux-tools-generic \  # Installation de perf via linux-tools-generic
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
