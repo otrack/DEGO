@@ -70,9 +70,9 @@ done
 for repo in "${repos[@]}"
 do
     echo "Analyzing repository: ${repo}"
-    python3.11 mining.py -r "${repo}" ${class_args} -hot
-    python3.11 mining.py -r "${repo}" ${class_args} -e
-    python3.11 mining.py -r "${repo}" ${class_args}
+    python3.11 mining_corrected.py -r "${repo}" ${class_args} -hot
+    python3.11 mining_corrected.py -r "${repo}" ${class_args} -e
+    python3.11 mining_corrected.py -r "${repo}" ${class_args}
 done
 
 python3.11 sort_hot_file.py
