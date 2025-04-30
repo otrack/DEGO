@@ -38,7 +38,7 @@ compile=false
 while getopts 'xc:s:q:l:m:t:r:pew:u:n:fakvoi:zy:bh:g:d:jA:D' OPTION; do
     case "$OPTION" in
 	x)
-	    mvn clean package -f ../java -DskipTests;
+	    mvn clean package -f ./java -DskipTests;
 	    compile=true
 	    ;;
 	A)
