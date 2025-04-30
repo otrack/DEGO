@@ -1,45 +1,38 @@
-# Image de base : Ubuntu 22.04
+# Image de base
 FROM ubuntu:22.04
 
-# Éviter les prompts pendant l'installation
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Europe/Paris
 
-# Mettre à jour les paquets, ajouter le dépôt Python, puis installer les dépendances
+# Installer dépendances + Python + Maven + numactl
 RUN apt-get update \
-    && apt-get upgrade -y \
-    && apt-get install -y software-properties-common wget curl unzip git gnupg ca-certificates lsb-release \
-    && add-apt-repository ppa:deadsnakes/ppa -y \
-    && apt-get update \
-    && apt-get install -y \
-       python3.11 \
-       python3.11-dev \
-       python3.11-venv \
-       python3-pip \
-       openjdk-17-jdk \
-       maven \
-       numactl \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+ && apt-get install -y \
+    software-properties-common \
+    wget curl unzip git gnupg ca-certificates lsb-release \
+    python3.11 python3.11-dev python3.11-venv python3-pip \
+    maven \
+    numactl \
+ && ln -sf /usr/bin/python3.11 /usr/bin/python \
+ && ln -sf /usr/bin/python3.11 /usr/bin/python3 \
+ && pip install --no-cache-dir gdown
 
-# Symlinks pour que "python" et "python3" pointent vers Python 3.11
-RUN ln -sf /usr/bin/python3.11 /usr/bin/python \
-    && ln -sf /usr/bin/python3.11 /usr/bin/python3
+# Installer manuellement OpenJDK 22 depuis Adoptium
+RUN mkdir -p /opt/java \
+ && wget -q https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22%2B36/OpenJDK22U-jdk_x64_linux_hotspot_22_36.tar.gz \
+ && tar -xzf OpenJDK22U-jdk_x64_linux_hotspot_22_36.tar.gz -C /opt/java --strip-components=1 \
+ && rm OpenJDK22U-jdk_x64_linux_hotspot_22_36.tar.gz
 
-# Installer gdown pour télécharger depuis Google Drive
-RUN pip install --no-cache-dir gdown
+# Définir JAVA_HOME et mettre java 22 en PATH
+ENV JAVA_HOME=/opt/java
+ENV PATH="$JAVA_HOME/bin:$PATH"
 
-# Définir le répertoire de travail
+# Répertoire de travail
 WORKDIR /app
 
-# Copier les scripts dans le conteneur
+# Copier le code Java et les scripts
+COPY java/ /app/java/
 COPY experiences/download.sh run_experiences.sh test.sh run_mining.sh *.py ./
 
-COPY java/ /app/java/
-
-# Rendre les scripts exécutables
-RUN chmod +x download.sh run_experiences.sh
-
-# Point d’entrée : d’abord download.sh, puis run_experiences.sh
+RUN chmod +x download.sh run_experiences.sh test.sh run_mining.sh
 ENTRYPOINT ["./download.sh"]
 CMD ["./run_experiences.sh"]
