@@ -42,9 +42,9 @@ do
                 nbOps=$((1000000*nbThread))
                 for (( c=1; c<=nbTest; c++ ))
                 do
-                    ./test.sh ${params["${impl}"]} -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${impl}_${nbThread}" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z
-#                    perf=$(./test.sh ${params["${impl}"]} -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${impl}_${nbThread}" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z | grep -i "completion time :" | awk '{print $6}' | sed s/\(//g)
-#                    echo ${impl}";"${alpha}";"${nbUsersInit}";"${nbThread}";"${perf} >> results_retwis_fig_9.txt
+#                    ./test.sh ${params["${impl}"]} -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${impl}_${nbThread}" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z
+                    perf=$(./test.sh ${params["${impl}"]} -t Retwis -r "$ratio" -p -e -w $benchmarkTime -u $warmingUpTime -h "${impl}_${nbThread}" -y $nbUsersInit -d $nbUsersInit -i $nbOps -b -g $nbThread -A $alpha -z | grep -i "completion time :" | awk '{print $6}' | sed s/\(//g)
+                    echo ${impl}";"${alpha}";"${nbUsersInit}";"${nbThread}";"${perf} >> results_retwis_fig_9.txt
                 done
             done
         done
