@@ -1,7 +1,6 @@
 package eu.cloudbutton.dobj.benchmark;
 import eu.cloudbutton.dobj.Timeline;
 import eu.cloudbutton.dobj.key.Key;
-import eu.cloudbutton.dobj.segmented.ExtendedSegmentedHashSet;
 import eu.cloudbutton.dobj.utils.Helpers;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -111,6 +110,9 @@ public class Retwis {
 
     @Option(name = "-generate", usage = "If true, generate the graph then exit")
     private boolean _generate = false;
+
+    @Option(name = "-dap", usage = "If true, generate the graph such that")
+    private boolean _dap = false;
 
     private AtomicBoolean flagComputing,flagWarmingUp;
     private AtomicLong totalTime;
@@ -265,8 +267,6 @@ public class Retwis {
                     }
 
                     database.loadGraph();
-                    // database.loadCompleteGraph();
-                    // database.loadDAPGraph();
 
                     if (nbCurrTest == 1){
                         flagWarmingUp.set(true);
@@ -324,16 +324,9 @@ public class Retwis {
 
                     if (!database.isDAP())
                         System.out.println(database.statistics());
-
-//                    performHeapDump();
-//                    System.out.println("=> Nb total bin : " + database.nbTotalBin());
-//                    System.out.println("=> Total memory used : " + getTotalMemoryUsed()/1_000_000 + " MB");
-
                 }
 
-                long nbOpTotal = 0, timeTotalComputed = 0;
-
-                int unit = nbCurrThread;
+                long nbOpTotal = 0;
 
                 if (_breakdown && !_completionTime){
 
@@ -362,9 +355,6 @@ public class Retwis {
 
                         System.out.println("[Total (op): " + nbOpTotal);
                         System.out.printf("[Throughput (op/s): %.3E]", + nbOpTotal/(completionTime/(double)1000000000));
-//                        System.out.println(" ==> avg sum time op : " + ((timeTotalComputed/1_000_000)/nbCurrThread)/_nbTest + " ms");
-//                        System.out.println(" ==> nb original users : " + NB_USERS);
-//                        System.out.println(" ==> nb Tweet at the end : " + nbTweetFinal/_nbTest);
                         System.out.println(" ==> avg queue size : " + sumAvgQueueSizes/_nbTest);
                         System.out.println(" ==> avg follower : " + sumAvgFollower/_nbTest);
                         System.out.println(" ==> avg following : " + sumAvgFollowing/_nbTest);
@@ -374,7 +364,6 @@ public class Retwis {
                         System.out.println(" ==> % user with max following (or 20% less) : " + sumProportionUserWithMaxFollowing/_nbTest + "%");
                         System.out.println(" ==> % user without follower : " + sumProportionUserWithoutFollower/_nbTest + "%");
                         System.out.println(" ==> % user without following : " + sumProportionUserWithoutFollowing/_nbTest + "%");
-//                        System.out.println(" ==> nb user at the end : " + nbUserFinal/_nbTest);
                         System.out.println();
                     }
 
@@ -396,7 +385,6 @@ public class Retwis {
                 nbCurrThread = _nbThreads;
 
         }
-        // System.out.println("closing prog");
         System.exit(0);
     }
 
@@ -420,7 +408,6 @@ public class Retwis {
         AtomicInteger counterID;
         private final ThreadLocal<Integer> myId;
         int nbLocalUsers;
-        int nbAttempt;
         List<Key> users, usersToFollow, dummies;
         List<operationType> differentOpToDo;
         Key user, userToFollow, dummy;
@@ -450,8 +437,6 @@ public class Retwis {
                 List<Key> userToAdd = database.getMapUserToAdd().get(myId.get());
                 nbLocalUsers = userToAdd.size();
 
-//                if (_p)
-//                    System.out.println(myId.get()+": "+userToAdd.size()+" users");
                 assert database.getMapUserToAdd().get(myId.get()).size() > 0 : "not enough users!";
 
                 for (Key user : userToAdd){
@@ -463,26 +448,6 @@ public class Retwis {
 
                 latchFillDatabase.countDown();
                 latchFillDatabase.await();
-
-                for (Key userA : userToAdd){
-                    for (Key userB : database.getMapListUserFollow().get(userA)){
-                        try{
-//                            database.followUser(userA, userB);
-                        } catch (NullPointerException e) {
-                            int indiceA, indiceB;
-
-                            indiceA = database.getMapKeyToIndice().get(userA);
-                            indiceB = database.getMapKeyToIndice().get(userB);
-
-                            System.out.println("userA: " + userA +", userB: " + userB + "\n"
-                                    + "indiceA: " + indiceA + ", indiceB: " + indiceB + "\n"
-                                    + "=> is " + indiceA/nbLocalUsers + " = " + indiceB/nbLocalUsers+ " = " + myId.get() + " ?\n");
-                            System.exit(1);
-//                            e.printStackTrace();
-//                            throw new RuntimeException();
-                        }
-                    }
-                }
 
                 localUsersUsageProbabilityRange = database.getLocalUsersUsageProbabilityRange().get(myId.get());
                 usersFollowProbabilityRange = database.getUsersFollowProbabilityRange();
@@ -560,31 +525,21 @@ public class Retwis {
                 if (_completionTime){
                     long nbOperationToDo = Math.ceilDiv( _nbOps, database.getNbThread());
                     for (long i = 0; i < nbOperationToDo; i++) {
-//                        dummyFunction();
                         type = differentOpToDo.get((int) (i%RANGE_DIFF_OP_TO_DO));
                         compute(type);
-//                        cleanTimeline = i % (2 * _nbUserInit) == 0;
                     }
                 }else{
 
                     while (flagComputing.get()){
 
                         type = chooseOperation();
-                        // type = listOperationToDo.get(num%sizeOpToDo);
 
                         if (_multipleOperation){
                             int nbRepeat = 1000;
-                            for (int j = 0; j < nbRepeat; j++) {
+                            for (int j = 0; j < nbRepeat; j++)
                                 compute(type);
-//                                compute(type, timeLocalOperations, timeLocalDurations, false,num);
-                                //                                num++;
-                            }
                         }else{
-
                             compute(type);
-//                            compute(type, timeLocalOperations, timeLocalDurations, false, num);
-                            //
-//                            cleanTimeline = num++ % (2 * _nbUserInit) == 0;
                         }
                     }
                 }
@@ -602,12 +557,6 @@ public class Retwis {
                 throw new RuntimeException();
             }
             return null;
-        }
-
-        public void dummyFunction() throws InterruptedException {
-            nbAttempt++;
-//            TimeUnit.NANOSECONDS.sleep(1);
-//            System.nanoTime();
         }
 
         public operationType chooseOperation(){
@@ -684,12 +633,6 @@ public class Retwis {
                 System.exit(-1);
             }
         }
-
-        public void resetAllTimeline(){
-            for (Key usr: database.getLocalUsersUsageProbability().get(myId.get()).values()){
-                database.getMapTimelines().get(usr).clear();
-            }
-        }
     }
 
     public class Coordinator implements Callable<Void> {
@@ -705,7 +648,7 @@ public class Retwis {
         }
 
         @Override
-        public Void call() throws Exception {
+        public Void call() {
             long startTime, endTime;
             try {
 
@@ -717,9 +660,9 @@ public class Retwis {
 
                 database.clearLoadingData();
 
-                if (_p){
+                if (_p)
                     System.out.println(" ==> Warming up for " + _wTime + " seconds");
-                }
+
                 TimeUnit.SECONDS.sleep(_wTime);
                 startTime = System.nanoTime();
                 flagWarmingUp.set(false);
@@ -758,201 +701,5 @@ public class Retwis {
             }
             return null;
         }
-
-        private void saveOperationDistribution() throws IOException {
-            System.out.println("Save operation duration distribution");
-
-            Map<Long, Integer> map;
-
-            int binSize = 10000;
-
-            PrintWriter printWriter;
-            FileWriter fileWriter;
-
-            for (operationType type: values()){
-                fileWriter = new FileWriter("Duration_"+type.toString()+"_Distribution_"+ _tag + "_" + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
-                printWriter = new PrintWriter(fileWriter);
-
-                map = new HashMap<>();
-
-                for(Long time : timeDurations.get(type)){
-                    time = time - time % binSize;
-
-                    if (!map.containsKey(time)) {
-                        map.put(time,1);
-                    }
-                    else {
-                        map.put(time, map.get(time)+1);
-                    }
-                }
-
-                for (Long val: map.keySet()){
-                    printWriter.println(val + " " + map.get(val));
-                }
-
-                printWriter.flush();
-                fileWriter.close();
-            }
-
-        }
-
-        private void saveUserUsageDistribution() throws IOException {
-            System.out.println("Save user usage distribution");
-
-            Map<String, Integer> map = new HashMap<>();
-
-            PrintWriter printWriter;
-            FileWriter fileWriter;
-
-            fileWriter = new FileWriter("User_Usage_Distribution_"+ _tag + "_" + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
-            printWriter = new PrintWriter(fileWriter);
-
-            for (String s : userUsageDistribution){
-                if (!map.containsKey(s)) {
-                    map.put(s,1);
-                }
-                else {
-                    map.put(s, map.get(s)+1);
-                }
-            }
-
-            for (String s: map.keySet()){
-                printWriter.println(s + " " + map.get(s));
-            }
-
-            printWriter.flush();
-            fileWriter.close();
-        }
-
-        private void saveDistributionHistogram(String tag) throws IOException {
-            if (_p){
-                System.out.println("Saving "+ tag +" distribution histogram");
-            }
-
-            int range = 5;
-            int max = 100;
-            String distributionHistogramFollower, distributionHistogramFollowing;
-
-//            distributionHistogramFollower = database.computeHistogram(range, max,"Follower");
-//            distributionHistogramFollowing = database.computeHistogram(range, max,"Following");
-
-            Map<Integer,Integer> mapHistogramFollower, mapHistogramFollowing;
-//
-            mapHistogramFollower = database.computeFollowHistogram(range, max,"Follower");
-            mapHistogramFollowing = database.computeFollowHistogram(range, max,"Following");
-
-            System.out.println("done computing the map");
-            PrintWriter printWriter;
-            FileWriter fileWriter;
-
-            fileWriter = new FileWriter("Follower_Distribution_"+ _tag + "_" + tag + "_" + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
-            printWriter = new PrintWriter(fileWriter);
-
-//            printWriter.println(distributionHistogramFollower);
-
-            for (Integer k : mapHistogramFollower.keySet())
-                printWriter.println(k + " " + mapHistogramFollower.get(k));
-
-            printWriter.flush();
-            fileWriter.close();
-
-            fileWriter = new FileWriter("Following_Distribution_" + _tag + "_" + tag + "_" + _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
-            printWriter = new PrintWriter(fileWriter);
-
-//            printWriter.println(distributionHistogramFollowing);
-            for (Integer k : mapHistogramFollowing.keySet())
-                printWriter.println(k + " " + mapHistogramFollowing.get(k));
-
-            printWriter.flush();
-            fileWriter.close();
-        }
-
-        private void saveTimelineHistogram() throws IOException {
-            if (_p){
-                System.out.println("saving timeline histogram");
-            }
-
-            PrintWriter printWriter;
-            FileWriter fileWriter;
-
-            fileWriter = new FileWriter("Timeline_Distribution_"+ _tag +"_"+ _nbUserInit + "_Users_" + _nbThreads + "_Threads.txt", false);
-            printWriter = new PrintWriter(fileWriter);
-
-            String txt = "";
-
-            for (Timeline<String> timeline : database.getMapTimelines().values()){
-                txt += timeline.getTimeline().size() + " ";
-            }
-
-            printWriter.print(txt);
-            printWriter.flush();
-            fileWriter.close();
-        }
-
-    }
-
-    public void startMonitoring(){
-        if (_p){
-            System.out.println("===> Starting monitoring with BTrace");
-        }
-    }
-    public void stopMonitoring(){
-        if (_p){
-            System.out.println("===> Ending monitoring.");
-        }
-    }
-
-    public static long getTotalMemoryUsed() {
-        Runtime runtime = Runtime.getRuntime();
-//        runtime.gc();
-
-        long totalMemory = runtime.totalMemory();
-        long freeMemory = runtime.freeMemory();
-
-        return totalMemory - freeMemory;
-    }
-
-    private void performHeapDump() {
-        System.out.println("Performing heapDump");
-        String jcmdCommand = "jcmd";
-        String processId = getProcessId();
-
-        try {
-            Process process = Runtime.getRuntime().exec(jcmdCommand);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                // Recherche de la ligne contenant le processus Java souhaité
-                if (line.contains(processId)) {
-                    String[] tokens = line.trim().split("\\s+");
-                    String pid = tokens[0];
-                    String heapDumpCommand = "jcmd " + pid + " GC.heap_dump heapdump_Retwis_benchmark_" + _tag +"_" + _nbUserInit +".hprof";
-
-                    // Exécution de la commande jcmd pour effectuer le heap dump
-                    Process heapDumpProcess = Runtime.getRuntime().exec(heapDumpCommand);
-
-                    // Attente de la fin de l'exécution de la commande
-                    int exitCode = heapDumpProcess.waitFor();
-
-                    if (exitCode == 0) {
-                        System.out.println("Heap dump effectué avec succès !");
-                    } else {
-                        System.out.println("Erreur lors de l'exécution de la commande jcmd.");
-                    }
-
-                    break;
-                }
-            }
-
-            reader.close();
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static String getProcessId() {
-        String processName = java.lang.management.ManagementFactory.getRuntimeMXBean().getName();
-        return processName.split("@")[0];
     }
 }
