@@ -31,6 +31,7 @@ WORKDIR /app
 
 # Copier le code Java et les scripts
 COPY java/ /app/java/
+COPY microbenchmark_results/ /app/microbenchmark_results/
 COPY experiences/download.sh run_experiences.sh test.sh run_mining.sh *.py ./
 
 RUN chmod +x download.sh run_experiences.sh test.sh run_mining.sh
