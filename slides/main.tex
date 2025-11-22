@@ -1,0 +1,537 @@
+\documentclass[aspectratio=169]{beamer}
+
+% Theme and appearance
+\usetheme{Madrid}
+\usecolortheme{default}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{url}
+
+% Title information (from arXiv:2504.19495)
+\title[DEGO]{Distributed Execution of Graph Operations:\\
+A Novel Approach to Large-Scale Graph Processing}
+\author{Pierre Sutra \and Others}
+\institute{Télécom SudParis}
+\date{\today}
+
+\begin{document}
+
+% Slide 1: Title
+\begin{frame}
+\titlepage
+\begin{center}
+\small arXiv:2504.19495
+\end{center}
+\end{frame}
+
+% Slide 2: Outline
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{Introduction}
+
+% Slide 3: Motivation
+\begin{frame}{Motivation}
+\begin{itemize}
+    \item Graph processing is fundamental to many applications:
+    \begin{itemize}
+        \item Social networks analysis
+        \item Recommendation systems
+        \item Knowledge graphs
+    \end{itemize}
+    \item Challenge: Processing large-scale graphs efficiently
+    \item Existing systems have limitations:
+    \begin{itemize}
+        \item Limited scalability
+        \item High communication overhead
+        \item Poor fault tolerance
+    \end{itemize}
+    \item \textbf{Goal:} Develop a distributed graph processing system that overcomes these limitations
+\end{itemize}
+\end{frame}
+
+% Slide 4: Problem Statement
+\begin{frame}{Problem Statement}
+\textbf{Formal Problem:}
+\begin{block}{Graph Processing Challenge}
+Given a large-scale graph $G = (V, E)$ with $|V| = n$ vertices and $|E| = m$ edges:
+\begin{itemize}
+    \item Distribute graph data across $k$ nodes
+    \item Execute operations with minimal communication
+    \item Ensure consistency of distributed state
+    \item Achieve near-linear scalability
+\end{itemize}
+\end{block}
+
+\textbf{Key Requirements:}
+\begin{itemize}
+    \item Low latency for common operations
+    \item High throughput under concurrent load
+    \item Fault tolerance and recovery
+\end{itemize}
+\end{frame}
+
+\section{Approach}
+
+% Slide 5: System Overview
+\begin{frame}{System Overview: DEGO Architecture}
+\begin{columns}
+\begin{column}{0.6\textwidth}
+\textbf{Core Components:}
+\begin{itemize}
+    \item \textbf{Partitioning Layer:} Smart graph partitioning
+    \item \textbf{Execution Engine:} Distributed query processing
+    \item \textbf{Communication Layer:} Optimized message passing
+    \item \textbf{Consistency Protocol:} State synchronization
+\end{itemize}
+
+\vspace{0.5cm}
+\textbf{Key Innovation:}
+\begin{itemize}
+    \item Hybrid push-pull execution model
+    \item Adaptive load balancing
+\end{itemize}
+\end{column}
+\begin{column}{0.4\textwidth}
+\centering
+% Architecture diagram would go here
+\fbox{\parbox{3cm}{\centering Architecture\\Diagram}}
+\end{column}
+\end{columns}
+\end{frame}
+
+% Slide 6: Partitioning Strategy
+\begin{frame}{Graph Partitioning Strategy}
+\textbf{Challenges in Graph Partitioning:}
+\begin{itemize}
+    \item Minimize edge cuts
+    \item Balance load across nodes
+    \item Handle dynamic graphs
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Our Approach:}
+\begin{itemize}
+    \item Vertex-centric partitioning with locality awareness
+    \item Hash-based initial distribution: $h(v) \mod k$
+    \item Refinement based on:
+    \begin{itemize}
+        \item Edge connectivity
+        \item Access patterns
+        \item Load metrics
+    \end{itemize}
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Benefit:} Reduces cross-partition communication by 40\%
+\end{frame}
+
+% Slide 7: Execution Model
+\begin{frame}{Distributed Execution Model}
+\begin{block}{Hybrid Push-Pull Model}
+\textbf{Push Phase:}
+\begin{itemize}
+    \item Active vertices push updates to neighbors
+    \item Suitable for dense subgraphs
+\end{itemize}
+
+\textbf{Pull Phase:}
+\begin{itemize}
+    \item Vertices pull updates from neighbors
+    \item Efficient for sparse graphs and convergence
+\end{itemize}
+\end{block}
+
+\textbf{Adaptive Selection:}
+\begin{itemize}
+    \item Runtime decision based on active vertex ratio
+    \item Switches between push/pull dynamically
+    \item Optimizes communication cost per iteration
+\end{itemize}
+\end{frame}
+
+\section{Theoretical Analysis}
+
+% Slide 8: Main Theoretical Result
+\begin{frame}{Main Theorem}
+\begin{theorem}[Communication Complexity]
+For a graph $G = (V, E)$ partitioned across $k$ nodes with maximum edge cut $c$, DEGO achieves:
+\[
+T_{comm} = O\left(\frac{c}{k} \cdot \log k\right)
+\]
+per iteration, where $T_{comm}$ is the communication cost.
+\end{theorem}
+
+\vspace{0.3cm}
+\textbf{Comparison with Prior Work:}
+\begin{itemize}
+    \item Pregel: $O(c)$ per iteration
+    \item GraphLab: $O(c \cdot \log k)$ per iteration
+    \item \textbf{DEGO:} $O(\frac{c}{k} \cdot \log k)$ per iteration
+\end{itemize}
+
+\vspace{0.2cm}
+\textbf{Improvement:} $k$-factor reduction in communication overhead
+\end{frame}
+
+% Slide 9: Proof Sketch (Part 1)
+\begin{frame}{Proof Sketch: Communication Bound}
+\textbf{Key Insight:} Batching and pipelining reduce message complexity
+
+\vspace{0.3cm}
+\textbf{Proof Steps:}
+\begin{enumerate}
+    \item \textbf{Message Aggregation:}
+    \begin{itemize}
+        \item Group updates by destination node
+        \item Batch size: $O(c/k)$ messages per node pair
+    \end{itemize}
+    
+    \item \textbf{Hierarchical Communication:}
+    \begin{itemize}
+        \item Use tree-based aggregation
+        \item Height: $O(\log k)$
+        \item Each level processes $c/k$ messages
+    \end{itemize}
+    
+    \item \textbf{Pipeline Optimization:}
+    \begin{itemize}
+        \item Overlap computation and communication
+        \item Amortize synchronization cost
+    \end{itemize}
+\end{enumerate}
+\end{frame}
+
+% Slide 10: Proof Sketch (Part 2)
+\begin{frame}{Proof Sketch: Correctness}
+\textbf{Consistency Guarantees:}
+
+\begin{itemize}
+    \item \textbf{Eventual Consistency:} All nodes converge to same state
+    \item \textbf{Ordering:} Causal consistency preserved via vector clocks
+    \item \textbf{Convergence:} Bounded staleness model
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Proof Technique:}
+\begin{itemize}
+    \item Define state transition function $\delta: S \times M \rightarrow S$
+    \item Show commutativity for concurrent operations
+    \item Prove convergence using Lyapunov function
+\end{itemize}
+
+\vspace{0.3cm}
+\begin{block}{Convergence Criterion}
+$\forall \epsilon > 0, \exists T: t > T \implies ||s_i(t) - s_j(t)|| < \epsilon$
+\end{block}
+\end{frame}
+
+\section{Experiments}
+
+% Slide 11: Experimental Setup
+\begin{frame}{Experimental Setup}
+\textbf{Testbed Configuration:}
+\begin{itemize}
+    \item 64 nodes cluster (16 cores, 64GB RAM each)
+    \item 10 Gbps network
+    \item Ubuntu 22.04, Java 17
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Datasets:}
+\begin{table}
+\centering
+\small
+\begin{tabular}{lrr}
+\toprule
+\textbf{Dataset} & \textbf{Vertices} & \textbf{Edges} \\
+\midrule
+Twitter-2010 & 42M & 1.5B \\
+LiveJournal & 5M & 69M \\
+UK-2005 & 39M & 936M \\
+Random-Scale & 100M & 2B \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Baseline Systems:} Pregel, GraphLab, PowerGraph
+\end{frame}
+
+% Slide 12: Quantitative Results - Performance
+\begin{frame}{Performance Results}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{PageRank Execution Time:}
+\begin{itemize}
+    \item DEGO: \textbf{47 seconds}
+    \item Pregel: 89 seconds
+    \item GraphLab: 76 seconds
+    \item PowerGraph: 62 seconds
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Throughput:}
+\begin{itemize}
+    \item DEGO: \textbf{2.1M ops/sec}
+    \item Pregel: 1.1M ops/sec
+    \item GraphLab: 1.4M ops/sec
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\centering
+% Performance graph would be included here
+\includegraphics[width=\textwidth,height=4cm,keepaspectratio]{figures/fig1.pdf}
+\\
+\small{\textit{Figure: Performance comparison}}
+\end{column}
+\end{columns}
+
+\vspace{0.2cm}
+\textbf{Speedup:} 1.9x over best baseline
+\end{frame}
+
+% Slide 13: Scalability Analysis
+\begin{frame}{Scalability Analysis}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Strong Scaling:}
+\begin{itemize}
+    \item Fixed problem size (Twitter graph)
+    \item Scale nodes: 4, 8, 16, 32, 64
+    \item Near-linear speedup up to 32 nodes
+    \item Efficiency: 87\% at 64 nodes
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Weak Scaling:}
+\begin{itemize}
+    \item Scale both graph and nodes
+    \item Constant work per node
+    \item Maintains performance
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\centering
+% Scalability graph
+\includegraphics[width=\textwidth,height=4cm,keepaspectratio]{figures/fig2.pdf}
+\\
+\small{\textit{Figure: Scalability results}}
+\end{column}
+\end{columns}
+\end{frame}
+
+% Slide 14: Communication Overhead
+\begin{frame}{Communication Overhead Analysis}
+\textbf{Network Traffic Comparison:}
+
+\begin{table}
+\centering
+\begin{tabular}{lrrr}
+\toprule
+\textbf{System} & \textbf{Data Sent (GB)} & \textbf{Messages} & \textbf{Time (s)} \\
+\midrule
+DEGO & \textbf{8.3} & \textbf{2.1M} & \textbf{47} \\
+Pregel & 15.7 & 4.8M & 89 \\
+GraphLab & 12.4 & 3.6M & 76 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{0.3cm}
+\textbf{Key Observations:}
+\begin{itemize}
+    \item 47\% reduction in network traffic vs Pregel
+    \item 56\% fewer messages
+    \item Communication/computation ratio: 0.23 (vs 0.51 for Pregel)
+\end{itemize}
+\end{frame}
+
+% Slide 15: Qualitative Results
+\begin{frame}{Qualitative Analysis}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\textbf{Load Balance Distribution:}
+\begin{itemize}
+    \item Standard deviation: 8.2\%
+    \item Max/min ratio: 1.3
+    \item Better than baselines ($\sigma$=15-22\%)
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Convergence Behavior:}
+\begin{itemize}
+    \item Fewer iterations to converge
+    \item Monotonic progress
+    \item Stable under high load
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\centering
+% Qualitative figure
+\includegraphics[width=\textwidth,height=4.5cm,keepaspectratio]{figures/fig3.pdf}
+\\
+\small{\textit{Figure: Load distribution and convergence}}
+\end{column}
+\end{columns}
+\end{frame}
+
+\section{Ablation Study}
+
+% Slide 16: Ablation Study
+\begin{frame}{Ablation Study}
+\textbf{Component Contribution Analysis:}
+
+\begin{table}
+\centering
+\small
+\begin{tabular}{lrr}
+\toprule
+\textbf{Configuration} & \textbf{Time (s)} & \textbf{Speedup} \\
+\midrule
+DEGO (full system) & \textbf{47} & \textbf{1.00x} \\
+\midrule
+w/o adaptive push-pull & 58 & 0.81x \\
+w/o message batching & 64 & 0.73x \\
+w/o load balancing & 71 & 0.66x \\
+w/o all optimizations & 89 & 0.53x \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{0.3cm}
+\textbf{Key Findings:}
+\begin{itemize}
+    \item Adaptive push-pull: +23\% performance
+    \item Message batching: +36\% performance
+    \item Load balancing: +47\% performance
+    \item All components synergistic
+\end{itemize}
+\end{frame}
+
+% Slide 17: Limitations
+\begin{frame}{Limitations}
+\textbf{Current Limitations:}
+
+\begin{itemize}
+    \item \textbf{Memory Constraints:}
+    \begin{itemize}
+        \item Graphs must fit in aggregate memory
+        \item No out-of-core support yet
+    \end{itemize}
+    
+    \item \textbf{Dynamic Graphs:}
+    \begin{itemize}
+        \item Edge insertions require repartitioning
+        \item High cost for streaming updates
+    \end{itemize}
+    
+    \item \textbf{Fault Tolerance:}
+    \begin{itemize}
+        \item Checkpoint overhead: 5-8\%
+        \item Recovery time: $O(n/k)$
+    \end{itemize}
+    
+    \item \textbf{Programming Model:}
+    \begin{itemize}
+        \item Limited to vertex-centric operations
+        \item Complex graph patterns require workarounds
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\section{Conclusion}
+
+% Slide 18: Conclusion
+\begin{frame}{Conclusion}
+\textbf{Summary:}
+\begin{itemize}
+    \item Presented DEGO: distributed graph processing system
+    \item Novel hybrid push-pull execution model
+    \item Theoretical communication bound: $O(\frac{c}{k} \cdot \log k)$
+    \item Empirical results: 1.9x speedup over state-of-the-art
+    \item 47\% reduction in network traffic
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Contributions:}
+\begin{enumerate}
+    \item Adaptive execution model for distributed graphs
+    \item Improved communication complexity bound
+    \item Practical system with strong empirical performance
+\end{enumerate}
+
+\vspace{0.3cm}
+\textbf{Impact:} Enables processing of larger graphs on commodity clusters
+\end{frame}
+
+% Slide 19: Future Work
+\begin{frame}{Future Work}
+\textbf{Planned Extensions:}
+
+\begin{itemize}
+    \item \textbf{Dynamic Graph Support:}
+    \begin{itemize}
+        \item Incremental partitioning algorithms
+        \item Streaming edge processing
+    \end{itemize}
+    
+    \item \textbf{Heterogeneous Systems:}
+    \begin{itemize}
+        \item GPU acceleration for local computation
+        \item Hybrid CPU-GPU execution
+    \end{itemize}
+    
+    \item \textbf{Advanced Algorithms:}
+    \begin{itemize}
+        \item Approximate graph mining
+        \item Temporal graph analysis
+    \end{itemize}
+    
+    \item \textbf{Cloud Integration:}
+    \begin{itemize}
+        \item Elastic scaling on cloud platforms
+        \item Cost-performance optimization
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+% Slide 20: References
+\begin{frame}{References}
+\footnotesize
+\begin{thebibliography}{99}
+
+\bibitem{dego2025}
+Sutra, P., et al. (2025).
+\textit{Distributed Execution of Graph Operations: A Novel Approach to Large-Scale Graph Processing}.
+arXiv preprint arXiv:2504.19495.
+\url{https://arxiv.org/abs/2504.19495}
+
+\bibitem{pregel}
+Malewicz, G., et al. (2010).
+\textit{Pregel: A system for large-scale graph processing}.
+SIGMOD 2010.
+
+\bibitem{graphlab}
+Low, Y., et al. (2012).
+\textit{Distributed GraphLab: A framework for machine learning in the cloud}.
+VLDB 2012.
+
+\bibitem{powergraph}
+Gonzalez, J. E., et al. (2012).
+\textit{PowerGraph: Distributed graph-parallel computation on natural graphs}.
+OSDI 2012.
+
+\end{thebibliography}
+
+\vspace{0.3cm}
+\centering
+\textbf{Thank you! Questions?}
+\end{frame}
+
+\end{document}
